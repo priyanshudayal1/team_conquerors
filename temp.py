@@ -1,6 +1,7 @@
 from PIL import Image
 from PIL.ExifTags import TAGS
 
+
 def extract_exif(image_path):
     image = Image.open(image_path)
     exif_data = image._getexif()
@@ -8,13 +9,14 @@ def extract_exif(image_path):
     if exif_data:
         for tag, value in exif_data.items():
             tag_name = TAGS.get(tag, tag)
-            if tag_name == 'Software':
+            if tag_name == "Software":
                 return value
-    
+
     else:
         return "NO_METADATA"
-    
+
     return "NO_SOFTWARE"
+
 
 # Example usage
 # print('For Original Image test2.jpg')
@@ -26,21 +28,18 @@ def extract_exif(image_path):
 # print(extract_exif('test1.jpg'))
 
 
-from PIL import Image, ImageChops, ImageEnhance
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
-def ela_image(path, output_path):
-    img = Image.open(path)
-    img.save(output_path, 'JPEG', quality=90)
+def analyze_noise(image_path):
+    img = cv2.imread(image_path, 0)
     
-    img_compressed = Image.open(output_path)
-    ela_image = ImageChops.difference(img, img_compressed)
+    laplacian = cv2.Laplacian(img, cv2.CV_64F)
     
-    extrema = ela_image.getextrema()
-    max_diff = max([ex[1] for ex in extrema])
-    scale = 255.0 / max_diff
-    ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
-    
-    ela_image.save('ela_output.png')
-    ela_image.show()
+    plt.figure(figsize=(6,6))
+    plt.imshow(laplacian, cmap='gray')
+    plt.title('Noise and Sharpness Analysis')
+    plt.show()
 
-ela_image('test1.jpg', 'compressed_image.jpg')
+analyze_noise('image_with_text.jpg')
