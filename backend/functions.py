@@ -9,6 +9,7 @@
 
 #Importing Libraries
 import pytesseract
+from PIL import Image
 
 
 #Supporting Functions
@@ -18,7 +19,10 @@ def text_from_image(image, engine_mode=3, whitelist=None, blacklist=None):
     """
     try:
         path_to_tesseract = r"C:\Program Files\Tesseract-OCR\tesseract.exe" 
+
+        # After installing tesseract if error occurs uncomment below line ok?
         # path_to_tesseract = r"C:\Program Files\Tesseract-OCR (X86)\tesseract.exe" 
+
         pytesseract.pytesseract.tesseract_cmd = path_to_tesseract
 
         custom_config = f'--oem {engine_mode}'
@@ -35,5 +39,22 @@ def text_from_image(image, engine_mode=3, whitelist=None, blacklist=None):
 
 
 # Main Functions
-def ocr_docs():
-    pass
+def is_clear_image(image):
+    text = text_from_image(image)
+
+    # For testing purpose only remove on prod
+    # print(text)
+
+    if len(text) > 20:
+        return True
+    return False
+
+if __name__ == '__main__':
+    print('Testing For "test.jpg"')
+    print('Yes Clear Image' if is_clear_image('test.jpg') else 'Not Clear Image')
+    
+    print('-------------------------------------------------------------------------')
+
+    print('Testing For "test2.jpg"')
+    print('Yes Clear Image' if is_clear_image('test2.jpg') else 'Not Clear Image')
+    # is_clear_image('test2.jpg')
