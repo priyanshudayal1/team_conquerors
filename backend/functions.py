@@ -12,9 +12,9 @@ import pytesseract
 
 
 #Supporting Functions
-def text_from_image(image, engine_mode=3, whitelist=None, blacklist=None, lang='tam'):
+def text_from_image(image, engine_mode=3, whitelist=None, blacklist=None):
     """
-    Extracts text from an image using Tesseract OCR with specified limits.
+    Extracts text from an image using Tesseract OCR with specified parameters.
     """
     try:
         path_to_tesseract = r"C:\Program Files\Tesseract-OCR\tesseract.exe" 
