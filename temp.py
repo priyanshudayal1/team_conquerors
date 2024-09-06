@@ -38,7 +38,7 @@ def analyze_noise(image_path):
     laplacian = cv2.Laplacian(img, cv2.CV_64F)
     
     plt.figure(figsize=(6,6))
-    plt.imshow(laplacian, cmap='gray')
+    plt.imshow(laplacian, cmap='binary')
     plt.title('Noise and Sharpness Analysis')
     plt.show()
 
