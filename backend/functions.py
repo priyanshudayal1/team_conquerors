@@ -1,6 +1,6 @@
 # Now deadline 9
 
-# Tasks in hand :
+# TASKS:
 # 0. Blur Image. DONE
 # 1. Need to create OCR function. DELAYED TILL FrontEND
 # 2. Photo shop / Edit detector. WORKING
@@ -41,6 +41,9 @@ def text_from_image(image, engine_mode=3, whitelist=None, blacklist=None):
 
 # Main Functions
 def is_clear_image(image_path):
+    """
+    Checking if text is readable or not.
+    """
     text = text_from_image(image_path)
 
     # For testing purpose only remove on prod
@@ -50,7 +53,16 @@ def is_clear_image(image_path):
         return True
     return False
 
+
+def after_edit_detector(image_path):
+    """
+    To Check if any Image is edited using Photoshop/Other tools.
+    """
+
+
+
 if __name__ == '__main__':
+    # For testing Blurred Image or Not:
     print('Testing For "test.jpg"')
     print('Yes Clear Image' if is_clear_image('test.jpg') else 'Not Clear Image')
     
@@ -58,4 +70,6 @@ if __name__ == '__main__':
 
     print('Testing For "test2.jpg"')
     print('Yes Clear Image' if is_clear_image('test2.jpg') else 'Not Clear Image')
-    # is_clear_image('test2.jpg')
+
+
+    # For testing Photoshop images or edited images
