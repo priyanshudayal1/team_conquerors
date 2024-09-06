@@ -42,4 +42,4 @@ def analyze_noise(image_path):
     plt.title('Noise and Sharpness Analysis')
     plt.show()
 
-analyze_noise('image_with_text.jpg')
+analyze_noise('test1.jpg')
