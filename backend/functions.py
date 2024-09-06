@@ -40,8 +40,8 @@ def text_from_image(image, engine_mode=3, whitelist=None, blacklist=None):
 
 
 # Main Functions
-def is_clear_image(image):
-    text = text_from_image(image)
+def is_clear_image(image_path):
+    text = text_from_image(image_path)
 
     # For testing purpose only remove on prod
     # print(text)
