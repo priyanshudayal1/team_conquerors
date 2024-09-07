@@ -1,10 +1,9 @@
 # Now deadline 9
 
 # TASKS:
-# 0. Blur Image. DONE
-# 1. Need to create OCR function. DELAYED TILL FrontEND
+# 1. Blur Image. DONE
 # 2. Photo shop / Edit detector. DONE
-# 3. Aadhar basic API
+# 3. Aadhar basic API WORKING
 # 4. File encrypt and decrypt function  
 # 5. Need to design a database
 
