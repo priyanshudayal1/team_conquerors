@@ -59,7 +59,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def analyze_noise(image_path):
+def analyze_noise(image_path,output_image_path='detected_edit.jpg'):
     img = cv2.imread(image_path, 0)
     
     laplacian = cv2.Laplacian(img, cv2.CV_64F)
@@ -76,17 +76,7 @@ def analyze_noise(image_path):
     highlighted_img = img_color.copy()
     highlighted_img[high_sharpness_mask > 0] = [0, 0, 255]
     
-    plt.figure(figsize=(12, 6))
-    
-    plt.subplot(1, 2, 1)
-    plt.imshow(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
-    plt.title('Original Image')
-    
-    plt.subplot(1, 2, 2)
-    plt.imshow(cv2.cvtColor(highlighted_img, cv2.COLOR_BGR2RGB))
-    plt.title('High Sharpness Regions Highlighted')
-    
-    plt.show()
+    cv2.imwrite(output_image_path, highlighted_img)
 
 
 # Main Functions
@@ -104,7 +94,7 @@ def is_clear_image(image_path):
     return False
 
 
-def after_edit_detector(image_path):
+def edit_detector(image_path):
     """
     To Check if any Image is edited using Photoshop/Other tools.
     """
@@ -121,5 +111,5 @@ if __name__ == '__main__':
     print('Testing For "test2.jpg"')
     print('Yes Clear Image' if is_clear_image('test2.jpg') else 'Not Clear Image')
 
-
     # For testing Photoshop images or edited images
+    analyze_noise('test1.jpg')
