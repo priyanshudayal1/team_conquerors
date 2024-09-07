@@ -1,4 +1,4 @@
-import { CloudUpload, Visibility, Edit } from '@material-ui/icons';
+import { CloudUpload, Visibility, Edit } from '@mui/icons-material';
 
 const DocumentCard = ({ document, onUpload, onView, onEdit }) => {
   const handleDrop = (acceptedFiles) => {

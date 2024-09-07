@@ -1,5 +1,4 @@
 import { Stepper, Step, StepLabel } from '@mui/material';
-import Image from 'next/image';
 import dashboardImg from '../../../public/dashboardImg.jpg';
 import Header from '../../components/Dashboard/Header';
 import Sidebar from '../../components/Dashboard/Sidebar';
@@ -25,7 +24,7 @@ const StudentDashboard = () => {
                 <Header/>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="flex justify-center">
-                        <Image
+                        <img
                             src={dashboardImg}
                             alt="Students"
                             className="rounded-lg shadow-md"

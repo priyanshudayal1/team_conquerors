@@ -1,6 +1,6 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { TextField, Container, Typography, Paper, IconButton, Box } from '@mui/material';
-import { Edit } from '@material-ui/icons';
+import { Edit } from '@mui/icons-material';
 import Header from '../../components/Dashboard/Header';
 import Sidebar from '../../components/Dashboard/Sidebar';
 
