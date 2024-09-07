@@ -3,7 +3,7 @@
 # TASKS:
 # 0. Blur Image. DONE
 # 1. Need to create OCR function. DELAYED TILL FrontEND
-# 2. Photo shop / Edit detector. WORKING
+# 2. Photo shop / Edit detector. DONE
 # 3. Aadhar basic API
 # 4. File encrypt and decrypt function  
 # 5. Need to design a database
