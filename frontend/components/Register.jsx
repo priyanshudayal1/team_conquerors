@@ -1,14 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { BACKEND_URL } from "@/utils/constants";
 import { useRouter } from "next/router";
+import { usePathname, useSearchParams } from "next/router";
 
 function Register() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [responseMessage, setResponseMessage] = useState("");
-  console.log(BACKEND_URL);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -55,15 +57,19 @@ function Register() {
         const data = await response.json();
         setResponseMessage(data.message);
         if (data.success) {
-          setTimeout(() => {
-            router.push("/login");
-          }, 1500);
+          setTimeout(() => {}, 1500);
         }
       } catch (error) {
         setResponseMessage("An error occurred. Please try again.");
       }
     },
   });
+
+  useEffect(() => {
+    if (responseMessage==='Student Registered Successfully') {
+      router.push("/login");
+    }
+  }, [responseMessage, router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -312,7 +318,6 @@ function Register() {
                 </div>
               ) : null}
             </div>
-           
           </div>
           <div>
             <button

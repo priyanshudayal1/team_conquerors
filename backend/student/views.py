@@ -48,7 +48,7 @@ def login(request):
         student=Students.objects.get(email=email)
         check_pass=check_password(password,student.password)
         if check_pass:
-            context={
+            data={
                 'name':student.name,
                 'email':student.email,
                 'college':student.college,
@@ -60,8 +60,8 @@ def login(request):
                 'class12_percent':student.class12_percent,
                 'phone':student.phone,
                 'documents':student.documents
-                }
-            return JsonResponse({'message':'Login Successful','success':True})
+            }
+            return JsonResponse({'message':'Login Successful','success':True,'data':data})
         else:
             return JsonResponse({'message':'Invalid Credentials','success':False})
     except:

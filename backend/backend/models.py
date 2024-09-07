@@ -15,20 +15,20 @@ class Students(models.Model):
     class12_percent= models.FloatField()
     status=models.IntegerField(default=0)
     phone = models.CharField(max_length=10)
-    documents = models.JSONField()
+    documents = models.JSONField(null=True, blank=True)
     def __str__(self):
         return self.name  
     
 class SAGBureau(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=255)
-    list_of_students = models.JSONField()
+    list_of_students = models.JSONField(null=True, blank=True)
     def __str__(self):
         return self.name
     
 class FinancialBureau(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=255)
-    list_of_students = models.JSONField()
+    list_of_students = models.JSONField(null=True, blank=True)
     def __str__(self):
         return self.name

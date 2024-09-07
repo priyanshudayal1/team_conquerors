@@ -91,8 +91,10 @@ DATABASES = {
 # backend/settings.py
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # Add the origin of your frontend
+    'http://localhost:5173',  # Add the origin of your frontend
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # backend/settings.py
 
