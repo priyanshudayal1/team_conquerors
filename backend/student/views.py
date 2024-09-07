@@ -39,7 +39,7 @@ def register(request):
         return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
 
 
-
+@csrf_exempt
 def login(request):
     data=json.loads(request.body)
     email=data['email']
