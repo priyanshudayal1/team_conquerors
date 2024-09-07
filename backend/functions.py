@@ -11,6 +11,9 @@
 import pytesseract
 from PIL import Image
 from PIL.ExifTags import TAGS
+import requests
+import cv2
+import numpy as np
 
 
 #Supporting Functions
@@ -54,10 +57,6 @@ def extract_exif(image_path):
     return "NO_SOFTWARE"
 
 
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-
 def analyze_noise(image_path,output_image_path='detected_edit.jpg'):
     img = cv2.imread(image_path, 0)
     
@@ -99,16 +98,52 @@ def edit_detector(image_path):
     """
 
 
+def aadhar_verifier(aadhar_number : str):
+    aadhar_numbers = {
+        '121212121212' : {
+            'name' : 'Anubhav Choubey',
+            'p_number': '9131853043',
+            'aadhar_number': '121212121212',
+            'address': 'Jabalpur 482005, Madhya Pradesh',
+            'dob':'25-03-2005'
+        },
+        '212121212121' : {
+            'name' : 'Rishita Parashar',
+            'p_number': '9090909090',
+            'aadhar_number': '212121212121',
+            'address': 'Jabalpur 482001, Madhya Pradesh',
+            'dob':'21-11-2004'
+        }
+    }
+
+    if aadhar_number not in aadhar_numbers.keys():
+        return "404" # 404 Response will be returned
+
+    return aadhar_numbers[aadhar_number]
+
 
 if __name__ == '__main__':
     # For testing Blurred Image or Not:
-    print('Testing For "test.jpg"')
-    print('Yes Clear Image' if is_clear_image('test.jpg') else 'Not Clear Image')
+    # print('Testing For "test.jpg"')
+    # print('Yes Clear Image' if is_clear_image('test.jpg') else 'Not Clear Image')
     
-    print('-------------------------------------------------------------------------')
+    # print('-------------------------------------------------------------------------')
 
-    print('Testing For "test2.jpg"')
-    print('Yes Clear Image' if is_clear_image('test2.jpg') else 'Not Clear Image')
+    # print('Testing For "test2.jpg"')
+    # print('Yes Clear Image' if is_clear_image('test2.jpg') else 'Not Clear Image')
 
     # For testing Photoshop images or edited images
-    analyze_noise('test1.jpg')
+    # analyze_noise('test1.jpg')
+
+    # For Testing Aadhar API
+    aadhar_num = input('Enter Your Aadhar Number: ')
+    print('----------------------------------------------------')
+    otp = input('Enter OTP: ')
+    print('----------------------------------------------------')
+    details = aadhar_verifier(aadhar_num)
+    print(f"Name: {details['name']}")
+    print(f"Aadhar Number: {details['aadhar_number']}")
+    print(f"Phone Number: {details['p_number']}")
+    print(f"DOB : {details['dob']}")
+    print(f"Address: {details['address']}")
+    
