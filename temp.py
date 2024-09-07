@@ -47,7 +47,7 @@ def analyze_noise(image_path):
     img_color = cv2.imread(image_path)
     
     highlighted_img = img_color.copy()
-    highlighted_img[high_sharpness_mask > 0] = [0, 0, 255]  # Set high sharpness areas to red
+    highlighted_img[high_sharpness_mask > 0] = [0, 0, 255]
     
     plt.figure(figsize=(12, 6))
     
@@ -57,7 +57,7 @@ def analyze_noise(image_path):
     
     plt.subplot(1, 2, 2)
     plt.imshow(cv2.cvtColor(highlighted_img, cv2.COLOR_BGR2RGB))
-    plt.title('High Sharpness Regions Highlighted')
+    plt.title('Possible Edited Region Highlighted')
     
     plt.show()
 
