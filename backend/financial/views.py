@@ -44,6 +44,6 @@ def update_financial(request):
             'list_of_students': financial.list_of_students,
             'email': financial.email
         }
-        return JsonResponse({'message': 'Financial Details', 'data': data, 'success': True})
+        return JsonResponse({'message': 'Financial Details', 'data': data, 'success': True,'role':'financial'})
     except Exception as e:
         return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)

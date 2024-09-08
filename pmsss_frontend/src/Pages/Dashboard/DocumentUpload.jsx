@@ -82,17 +82,17 @@ const DocumentUploadModal = ({ open }) => {
       console.log("Response:", data);
       setLoading(false);
       if (response.success) {
-        setStatus({
+        /*setStatus({
           file10th: "Upload successful",
           file12th: "Upload successful",
           collegeId: "Upload successful",
-        });
+        });*/
         setError({
           file10th: "Upload successful",
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
-        window.location.reload();
+        window.location.href = "/dashboard/student";
       } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
@@ -105,7 +105,7 @@ const DocumentUploadModal = ({ open }) => {
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
-        window.location.reload();
+        window.location.href = "/dashboard/student";
       }
     } catch (error) {
       console.error("Error:", error);

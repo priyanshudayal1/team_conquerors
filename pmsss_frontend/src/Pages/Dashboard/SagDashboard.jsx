@@ -48,7 +48,7 @@ const SagDashboard = () => {
 
   const handleEditCheck = async (documentId) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/photoshop/edit_check`, {
+      const response = await fetch(`${BACKEND_URL}/sag/give_feedback`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,8 +103,10 @@ const SagDashboard = () => {
             <TableRow>
               <TableCell>Student Name</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>College</TableCell>
+              <TableCell>Date of Birth</TableCell>
               <TableCell>Document Status</TableCell>
-              <TableCell>Edit Status</TableCell>
+              <TableCell>Feedback</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -113,6 +115,8 @@ const SagDashboard = () => {
               <TableRow key={student.id}>
                 <TableCell>{student.name}</TableCell>
                 <TableCell>{student.email}</TableCell>
+                <TableCell>{student.college}</TableCell>
+                <TableCell>{student.dob}</TableCell>
                 <TableCell>
                   {getStatusByIndex(student.status)}
                 </TableCell>
@@ -121,7 +125,7 @@ const SagDashboard = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleEditCheck(student.documentId)}
+                    onClick={() => handleEditCheck(student.email)}
                   >
                     Check Edit
                   </Button>

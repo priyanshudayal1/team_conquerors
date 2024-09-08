@@ -17,7 +17,7 @@ class Students(models.Model):
     phone = models.CharField(max_length=10)
     dob = models.CharField(max_length=10, null = True)
     address = models.TextField(null=True)
-    feedback = models.TextField(null=True)
+    feedback = models.TextField(null=True, blank=True)
     feedback_given = models.BooleanField(default=False)
     documents = models.JSONField(null=True, blank=True)
     def __str__(self):

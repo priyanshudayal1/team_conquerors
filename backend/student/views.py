@@ -169,6 +169,17 @@ def verify_user(request):
 
 
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+# Configure Cloudinary
+cloudinary.config(
+  cloud_name='dm23rhuct',  # Replace with your Cloudinary cloud name
+  api_key='972235453857764',        # Replace with your Cloudinary API key
+  api_secret='ZssdWvtjhYTH3ULILEf_ZYVK5zc'   # Replace with your Cloudinary API secret
+)
+
 
 @csrf_exempt
 def upload_docs(request):
@@ -181,9 +192,20 @@ def upload_docs(request):
             college_id = request.FILES.get('collegeId')
             email = request.POST.get('email')
             forced = request.POST.get('force')
-
             email_user = email.split('@')[0]
+            if file_10th:
+                response = cloudinary.uploader.upload(file_10th, public_id=f'{email_user}_10th')
+                file_10th_url = response['secure_url']
 
+            if file_12th:
+                response = cloudinary.uploader.upload(file_12th, public_id=f'{email_user}_12th')
+                file_12th_url = response['secure_url']
+
+            if college_id:
+                response = cloudinary.uploader.upload(college_id, public_id=f'{email_user}_id')
+                college_id_url = response['secure_url']
+
+        
             file_10th_path = None
             file_12th_path = None
             college_id_path = None
@@ -208,15 +230,14 @@ def upload_docs(request):
 
             student = Students.objects.get(email=email)
             student.documents = {
-                'file10th': file_10th_path,
-                'file12th': file_12th_path,
-                'collegeId': college_id_path
+                'file10th': file_10th_url,
+                'file12th': file_12th_url,
+                'collegeId': college_id_url
             }
             if forced == 'true':
                 force=True
-            else:
+            elif forced == 'false':
                 force=False
-            print('force:',force)
             # Checking for Blurred Image
             if forced == 'false':
                 blur = False
@@ -257,3 +278,80 @@ def upload_docs(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+
+
+
+# @csrf_exempt
+# def upload_docs(request):
+#     print('WWW')
+#     if request.method == 'POST':
+#         print('POST')
+#         try:
+#             file_10th = request.FILES.get('file10th')
+#             file_12th = request.FILES.get('file12th')
+#             college_id = request.FILES.get('collegeId')
+#             email = request.POST.get('email')
+#             forced = request.POST.get('force')
+
+#             email_user = email.split('@')[0]
+
+#             file_10th_url = None
+#             file_12th_url = None
+#             college_id_url = None
+
+#             if file_10th:
+#                 response = cloudinary.uploader.upload(file_10th, public_id=f'{email_user}_10th')
+#                 file_10th_url = response['secure_url']
+
+#             if file_12th:
+#                 response = cloudinary.uploader.upload(file_12th, public_id=f'{email_user}_12th')
+#                 file_12th_url = response['secure_url']
+
+#             if college_id:
+#                 response = cloudinary.uploader.upload(college_id, public_id=f'{email_user}_id')
+#                 college_id_url = response['secure_url']
+
+#             student = Students.objects.get(email=email)
+#             student.documents = {
+#                 'file10th': file_10th_url,
+#                 'file12th': file_12th_url,
+#                 'collegeId': college_id_url
+#             }
+#             if forced == 'true':
+#                 force=True
+#             else:
+#                 force=False
+#             print('force:',force)
+#             # Checking for Blurred Image
+#             if forced == 'false':
+#                 blur = False
+#                 file10thblur_message = 'Upload successful'
+#                 file12thblur_message = 'Upload successful'
+#                 collegeIdblur_message = 'Upload successful'
+
+#                 if file_10th_url and not is_clear_image(file_10th_url):
+#                     blur = True
+#                     file10thblur_message = "10th Marksheet is blur"
+
+#                 if file_12th_url and not is_clear_image(file_12th_url):
+#                     blur = True
+#                     file12thblur_message = "12th Marksheet is blur"
+
+#                 if college_id_url and not is_clear_image(college_id_url):
+#                     blur = True
+#                     collegeIdblur_message = "College ID is blur"
+
+#                 if blur:
+#                     return JsonResponse({'success': False, 'blur': True, 'errors': {'file10th': file10thblur_message, 'file12th': file12thblur_message, 'collegeId': collegeIdblur_message,'force':force}})
+            
+#             student.status = 2
+#             student.save()
+
+#             if not college_id or not email:
+#                 return JsonResponse({'errors': 'College ID or email is missing'}, status=400)
+
+#             return JsonResponse({'success': True, 'message': 'Files uploaded successfully','force':force}, status=200)
+#         except Exception as e:
+#             return JsonResponse({'success': False, 'errors': str(e)}, status=500)
+
+#     return JsonResponse({'error': 'Invalid request method'}, status=400)
