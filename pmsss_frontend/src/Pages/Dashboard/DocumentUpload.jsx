@@ -33,7 +33,7 @@ const DocumentUploadModal = ({ open }) => {
     formData.append('file10th', file10th);
     formData.append('file12th', file12th);
     formData.append('collegeId', collegeId);
-    formData.append('email', email); // Append email to the form data
+    formData.append('email', email); 
 
     try {
       const response = await fetch(`${BACKEND_URL}/student/upload_docs`, {
