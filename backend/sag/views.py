@@ -14,13 +14,17 @@ def login(request):
     try:
         sag=SAGBureau.objects.get(email=email)
         if (sag.password==password and sag.email==email):
+            list_of_students=sag.list_of_students
+            if list_of_students is None:
+                list_of_students=[]
             data={
-                'list_of_students':sag.list_of_students,
+                'list_of_students':list_of_students,
                 'email':sag.email,
+                'name':sag.name
             }
-            return JsonResponse({'message':'Login Successful','success':True,'url':'/sag/dashboard','role':'sag','data':data})
+            return JsonResponse({'message':'Login Successful','success':True,'url':'/dashboard/sag','role':'sag','data':data})
         else:
-            return JsonResponse({'message':'Login Failed','success':False})
+            return JsonResponse({'message':'Invalid Credentials','success':False})
     except Exception as e:
         return JsonResponse({'message':f'An error occurred: {str(e)}','success':False},status=500)
     

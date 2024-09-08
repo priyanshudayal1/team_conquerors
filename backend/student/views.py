@@ -61,7 +61,7 @@ def login(request):
                 'phone':student.phone,
                 'status':student.status,
                 }
-            return JsonResponse({'message':'Login Successful','success':True,'data':data,'url':'/student/dashboard','role':'student'})
+            return JsonResponse({'message':'Login Successful','success':True,'data':data,'url':'/dashboard/student','role':'student'})
         else:
             return JsonResponse({'message':'Invalid Credentials','success':False})
     except:

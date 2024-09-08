@@ -52,7 +52,7 @@ function Login() {
         const data = await response.json();
         if (data.success) {
           // Store data in localStorage
-          localStorage.setItem("userData", JSON.stringify(data.data));
+          localStorage.setItem("userData", JSON.stringify(data));
           window.location.href = `${data.url}`;
         } else {
           setResponseMessage(data.message || "Invalid Credentials");

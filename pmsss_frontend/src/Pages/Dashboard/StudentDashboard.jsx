@@ -1,11 +1,12 @@
 import { Stepper, Step, StepLabel } from "@mui/material";
 import dashboardImg from "../../../public/dashboardImg.jpg";
-import Header from "../../components/Dashboard/Header";
 import Sidebar from "../../components/Dashboard/Sidebar";
 import { useEffect, useState } from "react";
 import VerificationModal from "./VerificationModal";
 import DocumentUploadModal from "./DocumentUpload";
 import { updateUserData } from "../../utils/helper";
+import Header from "../../components/Dashboard/Header";
+
 
 const steps = [
   "Registered",
@@ -40,15 +41,15 @@ const StudentDashboard = () => {
   }, [isDocumentUploadModalOpen,isVerificationModalOpen]);
 
   useEffect(() => {
-    if (userData?.status === 0) {
+    if (userData?.data?.status === 0) {
       openVerificationModal();
       updateUserData();
-    } else if (userData?.status === 1) {
+    } else if (userData?.data?.status === 1) {
       setIsVerificationModalOpen(false);
       setIsDocumentUploadModalOpen(true);
       console.log("Verified");
       updateUserData();
-    } else if (userData?.status === 2) {
+    } else if (userData?.data?.status === 2) {
       setIsDocumentUploadModalOpen(false);
       console.log("Documents submitted");
       updateUserData();
@@ -59,7 +60,7 @@ const StudentDashboard = () => {
     <div className="flex flex-col md:flex-row h-screen">
       <Sidebar />
       <div className="flex-1 p-10 bg-gray-100">
-        <Header />
+        <Header title='Student Dashboard' />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex justify-center">
             <img
@@ -71,7 +72,7 @@ const StudentDashboard = () => {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Progress Tracker</h2>
             <Stepper
-              activeStep={(userData?.status ?? -1) + 1}
+              activeStep={(userData?.data?.status ?? -1) + 1}
               orientation="vertical"
             >
               {steps.map((label, index) => (

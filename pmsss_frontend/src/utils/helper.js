@@ -2,7 +2,7 @@ import { BACKEND_URL } from "./constants";
 
 export const updateUserData = async () => {
     const storedData = localStorage.getItem("userData");
-    const email = storedData ? JSON.parse(storedData).email : null;
+    const email = storedData ? JSON.parse(storedData).data.email : null;
     if (email) {
         try {
             const response = await fetch(`${BACKEND_URL}/student/update_user`, {

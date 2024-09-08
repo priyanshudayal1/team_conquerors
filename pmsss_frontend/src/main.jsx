@@ -11,6 +11,8 @@ import StudentDocument from "./Pages/Dashboard/StudentDocument";
 import StudentProfile from "./Pages/Dashboard/StudentProfile";
 import StudentSetting from "./Pages/Dashboard/StudentSetting";
 import AuthorityDashboard from "./Pages/Dashboard/AuthorityDashboard";
+import SagDashboard from "./Pages/Dashboard/SagDashboard";
+import FinancialDashboard from "./Pages/Dashboard/FinancialDashboard";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -25,6 +27,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/dashboard/student/documents" element={<StudentDocument />} />
           <Route path="/dashboard/student/settings" element={<StudentSetting />} />
           <Route path="/dashboard/authority" element={<AuthorityDashboard />} />
+          <Route path='/dashboard/sag' element={<SagDashboard />} />  
+          <Route path='/dashboard/financial' element={<FinancialDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -21,14 +21,22 @@ class Students(models.Model):
     
 class SAGBureau(models.Model):
     email = models.EmailField()
+    name=models.CharField(max_length=255,null=True,blank=True)
     password = models.CharField(max_length=255)
     list_of_students = models.JSONField(null=True, blank=True)
     def __str__(self):
-        return self.name
+        return self.email
+    def save(self, *args, **kwargs):
+        self.name=self.email
+        super(SAGBureau, self).save(*args, **kwargs)
     
 class FinancialBureau(models.Model):
+    name=models.CharField(max_length=255,null=True,blank=True)
     email = models.EmailField()
     password = models.CharField(max_length=255)
     list_of_students = models.JSONField(null=True, blank=True)
     def __str__(self):
-        return self.name
+        return self.email
+    def save(self, *args, **kwargs):
+        self.name=self.email
+        super(FinancialBureau, self).save(*args, **kwargs)

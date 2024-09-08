@@ -8,21 +8,30 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def login(request):
-    data=json.loads(request.body)
-    email=data['email']
-    password=data['password']
+    data = json.loads(request.body)
+    email = data['email']
+    password = data['password']
     try:
-        financial=FinancialBureau.objects.get(email=email)
-        if (financial.password==password and financial.email==email):
-            data={
-                'list_of_students':financial.list_of_students,
-                'email':financial.email,
+        financial = FinancialBureau.objects.get(email=email)
+        if financial.password == password and financial.email == email:
+            list_of_students = financial.list_of_students
+            if list_of_students is None:
+                list_of_students = []
+            else:
+                # Remove password from each student in the list
+                for student in list_of_students:
+                    if 'password' in student:
+                        del student['password']
+            data = {
+                'list_of_students': list_of_students,
+                'email': financial.email,
+                'name': financial.name
             }
-            return JsonResponse({'message':'Login Successful','success':True,'url':'/financial/dashboard','role':'financial','data':data})
+            return JsonResponse({'message': 'Login Successful', 'success': True, 'url': '/dashboard/financial', 'role': 'financial', 'data': data})
         else:
-            return JsonResponse({'message':'Login Failed','success':False})
+            return JsonResponse({'message': 'Invalid Credentials', 'success': False})
     except Exception as e:
-        return JsonResponse({'message':f'An error occurred: {str(e)}','success':False},status=500)
+        return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
     
     
 @csrf_exempt   
