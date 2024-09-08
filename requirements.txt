@@ -4,4 +4,5 @@ opencv-python
 django
 pytesseract
 cryptography
-django-cors-headers
+django-cors-
+requests
