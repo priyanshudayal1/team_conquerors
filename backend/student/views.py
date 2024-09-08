@@ -9,7 +9,7 @@ from functions import is_clear_image, encrypt_file
 
 # Create your views here.
 
-UPLOAD_DIR = '../docs'
+UPLOAD_DIR = 'docs'
 
 @csrf_exempt
 def register(request):
