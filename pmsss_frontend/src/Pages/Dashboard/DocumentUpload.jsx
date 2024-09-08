@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { CloudUpload } from "@mui/icons-material";
 import { BACKEND_URL } from "../../utils/constants";
+import { updateUserData } from "../../utils/helper";
 
 const DocumentUploadModal = ({ open }) => {
   const [file10th, setFile10th] = useState(null);
@@ -92,7 +93,8 @@ const DocumentUploadModal = ({ open }) => {
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
-        window.location.href = "/dashboard/student";
+        updateUserData();
+        /*window.location.href = "/dashboard/student";*/
       } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
@@ -105,7 +107,8 @@ const DocumentUploadModal = ({ open }) => {
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
-        window.location.href = "/dashboard/student";
+        updateUserData();
+        /*window.location.href = "/dashboard/student";*/
       }
     } catch (error) {
       console.error("Error:", error);

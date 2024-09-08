@@ -15,10 +15,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField,
+  CircularProgress,
 } from "@mui/material";
-import { Visibility, CheckCircle, Search } from "@mui/icons-material";
+import { Visibility, CheckCircle, Search, Feedback } from "@mui/icons-material";
 import Header from "../../components/Dashboard/Header";
 import { BACKEND_URL } from "../../utils/constants";
+import { updateUserData } from "../../utils/helper";
 
 const steps = [
   "Registered",
@@ -41,10 +44,13 @@ const documentLabels = {
 const SagDashboard = () => {
   const [students, setStudents] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
-  const [editStatuses, setEditStatuses] = useState({});
   const [warnings, setWarnings] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [approveDialog, setApproveDialog] = useState({ open: false, student: null, document: null });
+  const [aiDetectionResult, setAiDetectionResult] = useState({ open: false, url: null, meta: null });
+  const [feedbackDialog, setFeedbackDialog] = useState({ open: false, student: null });
+  const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Fetch student information from the backend
@@ -58,29 +64,6 @@ const SagDashboard = () => {
       window.location.href = "/login";
     }
   }, []);
-
-  const handleEditCheck = async (documentId, studentId) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/sag/give_feedback`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ documentId }),
-      });
-      const data = await response.json();
-      setEditStatuses((prevStatuses) => ({
-        ...prevStatuses,
-        [studentId]: data.edited ? "Edited" : "Not Edited",
-      }));
-      setWarnings((prevWarnings) => ({
-        ...prevWarnings,
-        [studentId]: data.edited ? "Warning: Document has been edited." : "",
-      }));
-    } catch (error) {
-      console.error("Error checking document edit:", error);
-    }
-  };
 
   const handleApprove = async (student, document) => {
     try {
@@ -101,6 +84,47 @@ const SagDashboard = () => {
       }
     } catch (error) {
       console.error("Error approving student:", error);
+    }
+  };
+
+  const handleDetectByAI = async (url) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/sag/detect_edit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setAiDetectionResult({ open: true, url: data.url, meta: data.meta_result });
+      }
+    } catch (error) {
+      console.error("Error detecting document edit:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddFeedback = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/sag/add_feedback`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: feedbackDialog.student.email, feedback }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFeedbackDialog({ open: false, student: null });
+        setFeedback("");
+        updateUserData();
+      }
+    } catch (error) {
+      console.error("Error adding feedback:", error);
     }
   };
 
@@ -133,6 +157,19 @@ const SagDashboard = () => {
     handleCloseApproveDialog();
   };
 
+  const handleOpenFeedbackDialog = (student) => {
+    setFeedbackDialog({ open: true, student });
+  };
+
+  const handleCloseFeedbackDialog = () => {
+    setFeedbackDialog({ open: false, student: null });
+    setFeedback("");
+  };
+
+  const handleCloseAiDetectionResult = () => {
+    setAiDetectionResult({ open: false, url: null, meta: null });
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Header title="SAG Bureau Dashboard" />
@@ -158,24 +195,8 @@ const SagDashboard = () => {
                   <TableCell>{student.college}</TableCell>
                   <TableCell>{student.dob}</TableCell>
                   <TableCell>{getStatusByIndex(student.status)}</TableCell>
-                  <TableCell>{editStatuses[student.id]}</TableCell>
+                  <TableCell>{student.feedback_given ? student.feedback : "Not Given"}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleEditCheck(student.email, student.id)}
-                    >
-                      Check Edit
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => handleOpenApproveDialog(student, "all")}
-                      sx={{ ml: 2 }}
-                      disabled={student.verified}
-                    >
-                      Approve
-                    </Button>
                     <Button
                       variant="contained"
                       color="default"
@@ -184,16 +205,29 @@ const SagDashboard = () => {
                     >
                       {expandedRow === student.id ? "Hide" : "Show"} Documents
                     </Button>
+                    {
+                      !student.feedback_given &&
+                      <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<Feedback />}
+                      onClick={() => handleOpenFeedbackDialog(student)}
+                      sx={{ ml: 2 }}
+                    >
+                      Add Feedback
+                    </Button>
+                    }
+                    
                   </TableCell>
                 </TableRow>
                 {expandedRow === student.id && (
                   <TableRow>
                     <TableCell colSpan={7}>
-                      <Box sx={{ display: 'flex', overflowX: 'auto' }}>
+                      <Box sx={{ display: 'flex', overflowX: 'auto', justifyContent: 'space-evenly' }}>
                         {Object.entries(student.documents).map(([key, { url, status }], index) => (
-                          <Box key={index} sx={{ minWidth: 300, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
+                          <Box key={key} sx={{ minWidth: 400, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
                             <Typography variant="body2">{documentLabels[key]}</Typography>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, alignItems: 'center' }}>
                               <Button
                                 variant="outlined"
                                 color="primary"
@@ -206,6 +240,7 @@ const SagDashboard = () => {
                                 variant="outlined"
                                 color="secondary"
                                 startIcon={<Search />}
+                                onClick={() => handleDetectByAI(url)}
                               >
                                 Detect by AI
                               </Button>
@@ -263,6 +298,56 @@ const SagDashboard = () => {
           </Button>
           <Button onClick={handleConfirmApprove} color="secondary">
             Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={aiDetectionResult.open} onClose={handleCloseAiDetectionResult} maxWidth="md" fullWidth>
+        <DialogTitle>AI Detection Result</DialogTitle>
+        <DialogContent>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              {aiDetectionResult.url && (
+                <Box component="img" src={aiDetectionResult.url} alt="AI Detection Result" sx={{ width: '100%', height: 'auto' }} />
+              )}
+              {aiDetectionResult.meta && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="h6">Metadata:</Typography>
+                  <Typography variant="body2">{JSON.stringify(aiDetectionResult.meta, null, 2)}</Typography>
+                </Box>
+              )}
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAiDetectionResult} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={feedbackDialog.open} onClose={handleCloseFeedbackDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>Add Feedback</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Feedback"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseFeedbackDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddFeedback} color="secondary">
+            Submit
           </Button>
         </DialogActions>
       </Dialog>

@@ -20,6 +20,7 @@ cloudinary.config(
   api_secret='ZssdWvtjhYTH3ULILEf_ZYVK5zc'   # Replace with your Cloudinary API secret
 )
 
+
 def download_and_return_url(image_url: str):
     response = requests.get(image_url)
     img = Image.open(BytesIO(response.content))
@@ -38,8 +39,7 @@ def download_and_return_url(image_url: str):
     response = cloudinary.uploader.upload(img_bytes, public_id=f'bosad_10th')
     file_url = response['secure_url']
 
-    return meta_res,file_url
-
+    return meta_res, file_url
 
 @csrf_exempt    
 def login(request):
@@ -100,6 +100,12 @@ def approve_doc(request):
         if doc_name in docs:
             docs[doc_name]['status'] = 'approved'
             student.documents = docs
+
+            # Check if all documents are approved
+            all_approved = all(doc['status'] == 'approved' for doc in docs.values())
+            if all_approved:
+                student.status = 3
+
             student.save()
             return JsonResponse({'message': 'Document Approved', 'success': True})
         else:
@@ -109,9 +115,25 @@ def approve_doc(request):
 
 @csrf_exempt
 def detect_edit(request):
-    data = json.load(request.body)
+    data = json.loads(request.body)  # Use json.loads instead of json.load
     image_url = data['url']
 
     meta_res, url = download_and_return_url(image_url)
     
-    return JsonResponse({'success':True, 'url':url, 'meta_result':meta_res})
+    return JsonResponse({'success': True, 'url': url, 'meta_result': meta_res})
+
+
+@csrf_exempt
+def add_feedback(request):
+    data = json.loads(request.body)
+    email = data['email']
+    feedback = data['feedback']
+    try:
+        print('feedback:', feedback)
+        student = Students.objects.get(email=email)
+        student.feedback = feedback
+        student.feedback_given = True
+        student.save()
+        return JsonResponse({'message': 'Feedback added', 'success': True})
+    except Exception as e:
+        return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
