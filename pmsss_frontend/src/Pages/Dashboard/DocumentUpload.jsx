@@ -56,6 +56,7 @@ const DocumentUploadModal = ({ open }) => {
     formData.append("file12th", file12th);
     formData.append("collegeId", collegeId);
     formData.append("email", email);
+    formData.append("force",false);
 
     console.log("FormData:", formData);
 
