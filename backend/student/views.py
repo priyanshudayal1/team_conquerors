@@ -174,6 +174,7 @@ def verify_user(request):
 def upload_docs(request):
     print('WWW')
     if request.method == 'POST':
+        print('POST')
         try:
             file_10th = request.FILES.get('file10th')
             file_12th = request.FILES.get('file12th')
@@ -211,7 +212,11 @@ def upload_docs(request):
                 'file12th': file_12th_path,
                 'collegeId': college_id_path
             }
-
+            if forced == 'true':
+                force=True
+            else:
+                force=False
+            print('force:',force)
             # Checking for Blurred Image
             if forced == 'false':
                 blur = False
@@ -232,8 +237,7 @@ def upload_docs(request):
                     collegeIdblur_message = "College ID is blur"
 
                 if blur:
-                    return JsonResponse({'success': False, 'blur': True, 'errors': {'file10th': file10thblur_message, 'file12th': file12thblur_message, 'collegeId': collegeIdblur_message}}, status=400)
-
+                    return JsonResponse({'success': False, 'blur': True, 'errors': {'file10th': file10thblur_message, 'file12th': file12thblur_message, 'collegeId': collegeIdblur_message,'force':force}})
             if file_10th_path:
                 encrypt_file(file_10th_path)
             if file_12th_path:
@@ -247,7 +251,7 @@ def upload_docs(request):
             if not college_id or not email:
                 return JsonResponse({'errors': 'College ID or email is missing'}, status=400)
 
-            return JsonResponse({'success': True, 'message': 'Files uploaded successfully'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Files uploaded successfully','force':force}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'errors': str(e)}, status=500)
 

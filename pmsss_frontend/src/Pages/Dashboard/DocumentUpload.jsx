@@ -19,6 +19,7 @@ const DocumentUploadModal = ({ open }) => {
   const [file10th, setFile10th] = useState(null);
   const [file12th, setFile12th] = useState(null);
   const [collegeId, setCollegeId] = useState(null);
+  const [force, setForce] = useState(false);
   const [status, setStatus] = useState({
     file10th: "Not Uploaded",
     file12th: "Not Uploaded",
@@ -46,6 +47,23 @@ const DocumentUploadModal = ({ open }) => {
     setError((prevError) => ({ ...prevError, [fileType]: "" }));
   };
 
+  const handleReset = () => {
+    setFile10th(null);
+    setFile12th(null);
+    setCollegeId(null);
+    setStatus({
+      file10th: "Not Uploaded",
+      file12th: "Not Uploaded",
+      collegeId: "Not Uploaded",
+    });
+    setError({
+      file10th: "",
+      file12th: "",
+      collegeId: "",
+    });
+    setForce(false);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Submitting documents");
@@ -56,9 +74,10 @@ const DocumentUploadModal = ({ open }) => {
     formData.append("file12th", file12th);
     formData.append("collegeId", collegeId);
     formData.append("email", email);
-    formData.append("force", false);
+    formData.append("force", force);
 
-    console.log("FormData:", formData);
+
+    console.log("force:", force);
 
     try {
       const response = await fetch(`${BACKEND_URL}/student/upload_docs`, {
@@ -79,12 +98,20 @@ const DocumentUploadModal = ({ open }) => {
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
+        window.location.reload();
       } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
           file12th: data.errors?.file12th || "Upload failed",
           collegeId: data.errors?.collegeId || "Upload failed",
         });
+      }else if (data.force){
+        setError({
+          file10th: "Upload successful",
+          file12th: "Upload successful",
+          collegeId: "Upload successful",
+        });
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -95,6 +122,11 @@ const DocumentUploadModal = ({ open }) => {
         collegeId: "Upload failed",
       });
     }
+  };
+
+  const handleForceSubmit = () => {
+    setForce(true);
+    handleSubmit(new Event('submit'));
   };
 
   return (
@@ -224,8 +256,26 @@ const DocumentUploadModal = ({ open }) => {
               status.collegeId !== "Uploaded"
             }
           >
-            {loading ? <CircularProgress size={24} /> : "Submit"}
+            {loading ? <CircularProgress size={24} /> : force ? "Submit Again" : "Submit"}
           </Button>
+          {Object.values(error).some((err) => err.includes("is blur")) && (
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={handleReset}
+              >
+                Reset Files
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleForceSubmit}
+              >
+                Continue with These Files
+              </Button>
+            </Box>
+          )}
         </Box>
       </DialogContent>
     </Dialog>

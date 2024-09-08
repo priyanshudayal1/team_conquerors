@@ -35,7 +35,11 @@ const StepIcon = ({ icon, active, completed }) => {
   return (
     <IconComponent
       className={`${
-        completed ? "text-green-500" : active ? "text-blue-500" : "text-gray-500"
+        completed
+          ? "text-green-500"
+          : active
+          ? "text-blue-500"
+          : "text-gray-500"
       }`}
     />
   );
@@ -59,10 +63,6 @@ const StudentDashboard = () => {
   const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] =
     useState(false);
 
-  const openVerificationModal = () => {
-    setIsVerificationModalOpen(true);
-  };
-
   useEffect(() => {
     updateUserData();
     const storedData = localStorage.getItem("userData");
@@ -75,7 +75,7 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     if (userData?.data?.status === 0) {
-      openVerificationModal();
+      setIsVerificationModalOpen(true);
       updateUserData();
     } else if (userData?.data?.status === 1) {
       setIsVerificationModalOpen(false);
@@ -83,6 +83,7 @@ const StudentDashboard = () => {
       updateUserData();
     } else if (userData?.data?.status === 2) {
       setIsDocumentUploadModalOpen(false);
+      setIsVerificationModalOpen(false);
       console.log("Documents submitted");
       updateUserData();
     }
@@ -109,7 +110,11 @@ const StudentDashboard = () => {
             >
               {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel StepIconComponent={(props) => <StepIcon {...props} icon={index + 1} />}>
+                  <StepLabel
+                    StepIconComponent={(props) => (
+                      <StepIcon {...props} icon={index + 1} />
+                    )}
+                  >
                     <span
                       className={`text-md ${
                         index < (userData?.data?.status ?? -1) + 1

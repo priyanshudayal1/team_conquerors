@@ -4,7 +4,7 @@ import { BACKEND_URL } from "../../utils/constants";
 import { updateUserData } from "../../utils/helper";
 
 const VerificationModal = ({ open }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(open);
   const [mobile, setMobile] = useState("");
   const [aadhar, setAadhar] = useState("");
   const [email, setEmail] = useState("");
