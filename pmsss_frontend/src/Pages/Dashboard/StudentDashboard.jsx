@@ -5,7 +5,7 @@ import Sidebar from "../../components/Dashboard/Sidebar";
 import { useEffect, useState } from "react";
 import VerificationModal from "./VerificationModal";
 import DocumentUploadModal from "./DocumentUpload";
-
+import { updateUserData } from "../../utils/helper";
 
 const steps = [
   "Registered",
@@ -22,30 +22,38 @@ const steps = [
 const StudentDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
-  const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] = useState(false);
+  const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] =
+    useState(false);
 
   const openVerificationModal = () => {
     setIsVerificationModalOpen(true);
   };
 
   useEffect(() => {
+    updateUserData();
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       setUserData(JSON.parse(storedData));
     } else {
       console.log("No user data found");
     }
-  }, []);
+  }, [isDocumentUploadModalOpen,isVerificationModalOpen]);
 
   useEffect(() => {
     if (userData?.status === 0) {
       openVerificationModal();
+      updateUserData();
     } else if (userData?.status === 1) {
-      console.log("Verification successful");
-    } else if (userData?.status === 2) {
+      setIsVerificationModalOpen(false);
       setIsDocumentUploadModalOpen(true);
+      console.log("Verified");
+      updateUserData();
+    } else if (userData?.status === 2) {
+      setIsDocumentUploadModalOpen(false);
+      console.log("Documents submitted");
+      updateUserData();
     }
-  }, [userData]);
+  }, [userData, isDocumentUploadModalOpen,isVerificationModalOpen]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
@@ -62,7 +70,10 @@ const StudentDashboard = () => {
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Progress Tracker</h2>
-            <Stepper activeStep={userData?.status + 1} orientation="vertical">
+            <Stepper
+              activeStep={(userData?.status ?? -1) + 1}
+              orientation="vertical"
+            >
               {steps.map((label, index) => (
                 <Step key={label}>
                   <StepLabel>

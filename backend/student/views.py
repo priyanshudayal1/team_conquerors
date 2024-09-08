@@ -68,4 +68,25 @@ def login(request):
         return JsonResponse({'message':'Invalid Credentials','success':False})
     
     
-
+@csrf_exempt
+def update_user(request):
+    data=json.loads(request.body)
+    email=data['email']
+    try:
+        student=Students.objects.get(email=email)
+        user_data={
+            'name':student.name,
+            'email':student.email,
+            'college':student.college,
+            'account_number':student.account_number,
+            'ifsc':student.ifsc,
+            'father_name':student.father_name,
+            'income':student.income,
+            'class10_percent':student.class10_percent,
+            'class12_percent':student.class12_percent,
+            'phone':student.phone,
+            'status':student.status
+        }   
+        return JsonResponse({'message':'User Updated Successfully','success':True,'data':user_data})
+    except:
+        return JsonResponse({'message':'User not found','success':False})
