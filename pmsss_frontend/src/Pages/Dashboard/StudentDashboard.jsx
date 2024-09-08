@@ -80,7 +80,6 @@ const StudentDashboard = () => {
     } else if (userData?.data?.status === 1) {
       setIsVerificationModalOpen(false);
       setIsDocumentUploadModalOpen(true);
-      console.log("Verified");
       updateUserData();
     } else if (userData?.data?.status === 2) {
       setIsDocumentUploadModalOpen(false);

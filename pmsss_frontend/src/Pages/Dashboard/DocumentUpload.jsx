@@ -10,61 +10,50 @@ const DocumentUploadModal = ({ open }) => {
   const [status, setStatus] = useState({ file10th: 'Not Uploaded', file12th: 'Not Uploaded', collegeId: 'Not Uploaded' });
   const [error, setError] = useState({ file10th: '', file12th: '', collegeId: '' });
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
 
-  const uploadFile = async (file, fileType) => {
+  const handleFileChange = (event, setFile, fileType) => {
+    const file = event.target.files[0];
+    setFile(file);
+    setStatus((prevStatus) => ({ ...prevStatus, [fileType]: 'Uploaded' }));
+    setError((prevError) => ({ ...prevError, [fileType]: '' }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const storedData = localStorage.getItem("userData");
+    let email = '';
+    if (storedData) {
+      email = JSON.parse(storedData).data.email;
+      setEmail(email);
+    }
+
     setLoading(true);
     const formData = new FormData();
-    formData.append(fileType, file);
+    formData.append('file10th', file10th);
+    formData.append('file12th', file12th);
+    formData.append('collegeId', collegeId);
+    formData.append('email', email); // Append email to the form data
 
     try {
-      const response = await fetch(`${BACKEND_URL}/student/upload_doc`, {
+      const response = await fetch(`${BACKEND_URL}/student/upload_docs`, {
         method: 'POST',
         body: formData,
       });
       const data = await response.json();
       setLoading(false);
       if (response.ok) {
-        setStatus((prevStatus) => ({ ...prevStatus, [fileType]: 'Upload successful' }));
+        setStatus({ file10th: 'Upload successful', file12th: 'Upload successful', collegeId: 'Upload successful' });
       } else {
-        setError((prevError) => ({ ...prevError, [fileType]: data.errors?.[fileType] || 'Upload failed' }));
+        setError({
+          file10th: data.errors?.file10th || 'Upload failed',
+          file12th: data.errors?.file12th || 'Upload failed',
+          collegeId: data.errors?.collegeId || 'Upload failed',
+        });
       }
     } catch (error) {
       setLoading(false);
-      setError((prevError) => ({ ...prevError, [fileType]: 'Upload failed' }));
-    }
-  };
-
-  const handleFileChange = (event, setFile, fileType) => {
-    const file = event.target.files[0];
-    setFile(file);
-    setStatus((prevStatus) => ({ ...prevStatus, [fileType]: 'Uploading...' }));
-    setError((prevError) => ({ ...prevError, [fileType]: '' }));
-    uploadFile(file, fileType);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (status.file10th === 'Upload successful' && status.file12th === 'Upload successful' && status.collegeId === 'Upload successful') {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('file10th', file10th);
-      formData.append('file12th', file12th);
-      formData.append('collegeId', collegeId);
-
-      try {
-        const response = await fetch(`${BACKEND_URL}/update_doc_status`, {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-        setLoading(false);
-        if (!response.ok) {
-          console.error('Failed to update document status:', data);
-        }
-      } catch (error) {
-        setLoading(false);
-        console.error('Failed to update document status:', error);
-      }
+      setError({ file10th: 'Upload failed', file12th: 'Upload failed', collegeId: 'Upload failed' });
     }
   };
 
@@ -113,7 +102,7 @@ const DocumentUploadModal = ({ open }) => {
                 onChange={(e) => handleFileChange(e, fileType === 'file10th' ? setFile10th : fileType === 'file12th' ? setFile12th : setCollegeId, fileType)}
                 style={{ display: 'none' }}
                 id={`file-upload-${fileType}`}
-                disabled={(fileType === 'file10th' && file10th !== null) || (fileType === 'file12th' && (status.file10th !== 'Upload successful' || file12th !== null)) || (fileType === 'collegeId' && (status.file12th !== 'Upload successful' || collegeId !== null))}
+                disabled={(fileType === 'file10th' && file10th !== null) || (fileType === 'file12th' && (status.file10th !== 'Uploaded' || file12th !== null)) || (fileType === 'collegeId' && (status.file12th !== 'Uploaded' || collegeId !== null))}
               />
               <label htmlFor={`file-upload-${fileType}`} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <IconButton color="primary" component="span">
@@ -133,7 +122,7 @@ const DocumentUploadModal = ({ open }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disabled={loading || status.file10th !== 'Upload successful' || status.file12th !== 'Upload successful' || status.collegeId !== 'Upload successful'}>
+        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disabled={loading || status.file10th !== 'Uploaded' || status.file12th !== 'Uploaded' || status.collegeId !== 'Uploaded'}>
           {loading ? <CircularProgress size={24} /> : 'Submit'}
         </Button>
       </DialogActions>
