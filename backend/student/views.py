@@ -4,9 +4,11 @@ import json
 from backend.models import Students
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
+import os
 
 # Create your views here.
 
+UPLOAD_DIR = '../docs'
 
 @csrf_exempt
 def register(request):
@@ -164,9 +166,33 @@ def verify_user(request):
     return JsonResponse({'success':False})
 
 
-def upload_doc(request):
-    data = json.loads(request.body)
-    # print('data:',data)
-    email = data["email"]
-    student = Students.objects.get(email=email)
+@csrf_exempt
+def upload_docs(request):
+    if request.method == 'POST':
+        try:
+            file_10th = request.FILES.get('file10th')
+            file_12th = request.FILES.get('file12th')
+            college_id = request.POST.get('collegeId')
+            email = request.POST.get('email')
+
+            if file_10th:
+                file_10th_path = os.path.join(UPLOAD_DIR, file_10th.name)
+                with open(file_10th_path, 'wb+') as destination:
+                    for chunk in file_10th.chunks():
+                        destination.write(chunk)
+
+            if file_12th:
+                file_12th_path = os.path.join(UPLOAD_DIR, file_12th.name)
+                with open(file_12th_path, 'wb+') as destination:
+                    for chunk in file_12th.chunks():
+                        destination.write(chunk)
+
+            if not college_id or not email:
+                return JsonResponse({'errors': 'College ID or email is missing'}, status=400)
+
+            return JsonResponse({'message': 'Files uploaded successfully'}, status=200)
+        except Exception as e:
+            return JsonResponse({'errors': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
