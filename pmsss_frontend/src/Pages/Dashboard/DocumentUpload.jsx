@@ -33,6 +33,7 @@ const DocumentUploadModal = ({ open }) => {
   });
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  
 
   useEffect(() => {
     const storedData = localStorage.getItem("userData");
@@ -82,7 +83,9 @@ const DocumentUploadModal = ({ open }) => {
       const data = await response.json();
       console.log("Response:", data);
       setLoading(false);
-      if (response.success) {
+      
+      if (data.success) {
+        console.log("has success");
         /*setStatus({
           file10th: "Upload successful",
           file12th: "Upload successful",
@@ -94,7 +97,6 @@ const DocumentUploadModal = ({ open }) => {
           collegeId: "Upload successful",
         });
         updateUserData();
-        window.location.href = "/dashboard/student";
       } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
@@ -108,7 +110,6 @@ const DocumentUploadModal = ({ open }) => {
           collegeId: "Upload successful",
         });
         updateUserData();
-        window.location.href = "/dashboard/student";
       }
     } catch (error) {
       console.error("Error:", error);

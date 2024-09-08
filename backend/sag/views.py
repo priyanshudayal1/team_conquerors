@@ -70,7 +70,7 @@ def update_sag(request):
     email = data['email']
     try:
         sag = SAGBureau.objects.get(email=email)
-        list_of_students = Students.objects.filter(status__in=[2, 3,4]).values('email', 'name', 'status', 'college', 'dob', 'phone', 'address', 'feedback', 'feedback_given', 'documents')
+        list_of_students = Students.objects.filter(status__in=[2,3,4]).values('email', 'name', 'status', 'college', 'dob', 'phone', 'address', 'feedback', 'feedback_given', 'documents')
         list_of_students = list(list_of_students)
         data = {
             'list_of_students': list_of_students,

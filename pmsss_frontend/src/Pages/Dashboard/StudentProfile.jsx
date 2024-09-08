@@ -27,10 +27,10 @@ const steps = [
   "Verified",
   "Documents Submitted",
   "Automatic Verification",
-  "Forwarded to SAG Bureau",
   "Final Verification",
+  "Forwarded to SAG Bureau",
   "Forwarded to Financial Bureau",
-  "Scholarship Approval",
+  "Scholarship Approved",
   "Disbursed",
 ];
 

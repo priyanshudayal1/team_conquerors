@@ -14,7 +14,7 @@ def login(request):
     try:
         financial = FinancialBureau.objects.get(email=email)
         if financial.password == password and financial.email == email:
-            list_of_students = Students.objects.filter(status__in=[5,6,7]).values('name', 'account_number','ifsc','college','phone','address','status','email')
+            list_of_students = Students.objects.filter(status__in=[5,6,7]).values('name', 'account_number','ifsc','college','phone','address','status','email','transaction_id','feedback','feedback_given')
             list_of_students = list(list_of_students)
             data = {
                 'list_of_students': list_of_students,
@@ -35,7 +35,7 @@ def update_financial(request):
     try:
         financial = FinancialBureau.objects.get(email=email)
 
-        list_of_students = Students.objects.filter(status__in=[5,6,7]).values('name', 'account_number','ifsc','college','phone','address','status','email')
+        list_of_students = Students.objects.filter(status__in=[5,6,7]).values('name', 'account_number','ifsc','college','phone','address','status','email','transaction_id','feedback','feedback_given')
         list_of_students = list(list_of_students)
         data = {
             'list_of_students': list_of_students,

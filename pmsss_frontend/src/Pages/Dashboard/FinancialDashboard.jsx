@@ -28,7 +28,7 @@ const steps = [
   "Final Verification",
   "Forwarded to SAG Bureau",
   "Forwarded to Financial Bureau",
-  "Scholarship Approval",
+  "Scholarship Approved",
   "Disbursed",
 ];
 
@@ -75,6 +75,8 @@ const FinancialDashboard = () => {
           )
         );
         setTransactionId('');
+        updateUserData();
+        window.location.reload();
       } else {
         console.error('Failed to update status:', data.message);
       }
@@ -99,6 +101,7 @@ const FinancialDashboard = () => {
         setTransactionDialog({ open: false, application: null });
         setTransactionId('');
         updateUserData();
+        window.location.reload();
       } else {
         console.error('Failed to add transaction ID:', data.message);
       }
@@ -161,6 +164,7 @@ const FinancialDashboard = () => {
               <TableCell>IFSC Code</TableCell>
               <TableCell>Transaction ID</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Feedback</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -179,6 +183,7 @@ const FinancialDashboard = () => {
                   <TableCell>{application.ifsc}</TableCell>
                   <TableCell>
                     {application.transaction_id ? (
+                      console.log("transaction_id", application.transaction_id),
                       application.transaction_id
                     ) : (
                       <Button
@@ -191,6 +196,7 @@ const FinancialDashboard = () => {
                     )}
                   </TableCell>
                   <TableCell>{getStatusByIndex(application.status)}</TableCell>
+                  <TableCell>{ application.feedback_given ? application.feedback : "Not Given"}</TableCell>
                   <TableCell>
                     {application.status === 7 ? (
                       <Button

@@ -28,10 +28,10 @@ const steps = [
   "Verified",
   "Documents Submitted",
   "Automatic Verification",
-  "Forwarded to SAG Bureau",
   "Final Verification",
+  "Forwarded to SAG Bureau",
   "Forwarded to Financial Bureau",
-  "Scholarship Approval",
+  "Scholarship Approved",
   "Disbursed",
 ];
 
@@ -46,9 +46,20 @@ const SagDashboard = () => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [warnings, setWarnings] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null);
-  const [approveDialog, setApproveDialog] = useState({ open: false, student: null, document: null });
-  const [aiDetectionResult, setAiDetectionResult] = useState({ open: false, url: null, meta: null });
-  const [feedbackDialog, setFeedbackDialog] = useState({ open: false, student: null });
+  const [approveDialog, setApproveDialog] = useState({
+    open: false,
+    student: null,
+    document: null,
+  });
+  const [aiDetectionResult, setAiDetectionResult] = useState({
+    open: false,
+    url: null,
+    meta: null,
+  });
+  const [feedbackDialog, setFeedbackDialog] = useState({
+    open: false,
+    student: null,
+  });
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -77,11 +88,8 @@ const SagDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setStudents((prevStudents) =>
-          prevStudents.map((s) =>
-            s.id === student.id ? { ...s, documents: { ...s.documents, [document]: { ...s.documents[document], status: "approved" } } } : s
-          )
-        );
+        updateUserData();
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error approving student:", error);
@@ -100,7 +108,11 @@ const SagDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setAiDetectionResult({ open: true, url: data.url, meta: data.meta_result });
+        setAiDetectionResult({
+          open: true,
+          url: data.url,
+          meta: data.meta_result,
+        });
       }
     } catch (error) {
       console.error("Error detecting document edit:", error);
@@ -123,6 +135,7 @@ const SagDashboard = () => {
         setFeedbackDialog({ open: false, student: null });
         setFeedback("");
         updateUserData();
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error adding feedback:", error);
@@ -203,7 +216,9 @@ const SagDashboard = () => {
                     <TableCell>{student.college}</TableCell>
                     <TableCell>{student.dob}</TableCell>
                     <TableCell>{getStatusByIndex(student.status)}</TableCell>
-                    <TableCell>{student.feedback_given ? student.feedback : "Not Given"}</TableCell>
+                    <TableCell>
+                      {student.feedback_given ? student.feedback : "Not Given"}
+                    </TableCell>
                     <TableCell>
                       <Button
                         variant="contained"
@@ -213,62 +228,91 @@ const SagDashboard = () => {
                       >
                         {expandedRow === student.id ? "Hide" : "Show"} Documents
                       </Button>
-                      {
-                        !student.feedback_given &&
+                      {!student.feedback_given && (
                         <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<Feedback />}
-                        onClick={() => handleOpenFeedbackDialog(student)}
-                        sx={{ ml: 2 }}
-                      >
-                        Add Feedback
-                      </Button>
-                      }
-                      
+                          variant="contained"
+                          color="primary"
+                          startIcon={<Feedback />}
+                          onClick={() => handleOpenFeedbackDialog(student)}
+                          sx={{ ml: 2 }}
+                        >
+                          Add Feedback
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                   {expandedRow === student.id && (
                     <TableRow>
                       <TableCell colSpan={7}>
-                        <Box sx={{ display: 'flex', overflowX: 'auto', justifyContent: 'space-evenly' }}>
-                          {Object.entries(student.documents).map(([key, { url, status }], index) => (
-                            <Box key={key} sx={{ minWidth: 400, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
-                              <Typography variant="body2">{documentLabels[key]}</Typography>
-                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, alignItems: 'center' }}>
-                                <Button
-                                  variant="outlined"
-                                  color="primary"
-                                  startIcon={<Visibility />}
-                                  onClick={() => handleViewDocument(url)}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            overflowX: "auto",
+                            justifyContent: "space-evenly",
+                          }}
+                        >
+                          {Object.entries(student.documents).map(
+                            ([key, { url, status }], index) => (
+                              <Box
+                                key={key}
+                                sx={{
+                                  minWidth: 400,
+                                  p: 2,
+                                  border: "1px solid #ccc",
+                                  borderRadius: 2,
+                                  m: 1,
+                                }}
+                              >
+                                <Typography variant="body2">
+                                  {documentLabels[key]}
+                                </Typography>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    mt: 1,
+                                    alignItems: "center",
+                                  }}
                                 >
-                                  View
-                                </Button>
-                                <Button
-                                  variant="outlined"
-                                  color="secondary"
-                                  startIcon={<Search />}
-                                  onClick={() => handleDetectByAI(url)}
-                                >
-                                  Detect by AI
-                                </Button>
-                                {status === "approved" ? (
-                                  <Typography variant="body2" color="success.main">
-                                    Approved
-                                  </Typography>
-                                ) : (
                                   <Button
                                     variant="outlined"
-                                    color="success"
-                                    startIcon={<CheckCircle />}
-                                    onClick={() => handleOpenApproveDialog(student, key)}
+                                    color="primary"
+                                    startIcon={<Visibility />}
+                                    onClick={() => handleViewDocument(url)}
                                   >
-                                    Approve
+                                    View
                                   </Button>
-                                )}
+                                  <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    startIcon={<Search />}
+                                    onClick={() => handleDetectByAI(url)}
+                                  >
+                                    Detect by AI
+                                  </Button>
+                                  {status === "approved" ? (
+                                    <Typography
+                                      variant="body2"
+                                      color="success.main"
+                                    >
+                                      Approved
+                                    </Typography>
+                                  ) : (
+                                    <Button
+                                      variant="outlined"
+                                      color="success"
+                                      startIcon={<CheckCircle />}
+                                      onClick={() =>
+                                        handleOpenApproveDialog(student, key)
+                                      }
+                                    >
+                                      Approve
+                                    </Button>
+                                  )}
+                                </Box>
                               </Box>
-                            </Box>
-                          ))}
+                            )
+                          )}
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -279,18 +323,29 @@ const SagDashboard = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {Object.values(warnings).map((warning, index) => (
-        warning && (
-          <Alert key={index} severity="warning" sx={{ mt: 2 }}>
-            {warning}
-          </Alert>
-        )
-      ))}
-      <Dialog open={Boolean(selectedDocument)} onClose={handleCloseModal} maxWidth="md" fullWidth>
+      {Object.values(warnings).map(
+        (warning, index) =>
+          warning && (
+            <Alert key={index} severity="warning" sx={{ mt: 2 }}>
+              {warning}
+            </Alert>
+          )
+      )}
+      <Dialog
+        open={Boolean(selectedDocument)}
+        onClose={handleCloseModal}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Document View</DialogTitle>
         <DialogContent>
           {selectedDocument && (
-            <Box component="img" src={selectedDocument} alt="Document" sx={{ width: '100%', height: 'auto' }} />
+            <Box
+              component="img"
+              src={selectedDocument}
+              alt="Document"
+              sx={{ width: "100%", height: "auto" }}
+            />
           )}
         </DialogContent>
       </Dialog>
@@ -298,7 +353,9 @@ const SagDashboard = () => {
         <DialogTitle>Confirm Approval</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to approve {documentLabels[approveDialog.document]} for {approveDialog.student?.name}?
+            Are you sure you want to approve{" "}
+            {documentLabels[approveDialog.document]} for{" "}
+            {approveDialog.student?.name}?
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -310,22 +367,41 @@ const SagDashboard = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={aiDetectionResult.open} onClose={handleCloseAiDetectionResult} maxWidth="md" fullWidth>
+      <Dialog
+        open={aiDetectionResult.open}
+        onClose={handleCloseAiDetectionResult}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>AI Detection Result</DialogTitle>
         <DialogContent>
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
               <CircularProgress />
             </Box>
           ) : (
             <>
               {aiDetectionResult.url && (
-                <Box component="img" src={aiDetectionResult.url} alt="AI Detection Result" sx={{ width: '100%', height: 'auto' }} />
+                <Box
+                  component="img"
+                  src={aiDetectionResult.url}
+                  alt="AI Detection Result"
+                  sx={{ width: "100%", height: "auto" }}
+                />
               )}
               {aiDetectionResult.meta && (
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="h6">Metadata:</Typography>
-                  <Typography variant="body2">{JSON.stringify(aiDetectionResult.meta, null, 2)}</Typography>
+                  <Typography variant="body2">
+                    {JSON.stringify(aiDetectionResult.meta, null, 2)}
+                  </Typography>
                 </Box>
               )}
             </>
@@ -337,7 +413,12 @@ const SagDashboard = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={feedbackDialog.open} onClose={handleCloseFeedbackDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={feedbackDialog.open}
+        onClose={handleCloseFeedbackDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add Feedback</DialogTitle>
         <DialogContent>
           <TextField

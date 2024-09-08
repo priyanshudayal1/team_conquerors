@@ -50,10 +50,10 @@ const steps = [
   "Verified",
   "Documents Submitted",
   "Automatic Verification",
-  "Forwarded to SAG Bureau",
   "Final Verification",
+  "Forwarded to SAG Bureau",
   "Forwarded to Financial Bureau",
-  "Scholarship Approval",
+  "Scholarship Approved",
   "Disbursed",
 ];
 
@@ -72,12 +72,7 @@ const StudentDashboard = () => {
     }
   }
   useEffect(() => {
-    const storedData = localStorage.getItem("userData");
-    if (storedData) {
-      setUserData(JSON.parse(storedData));
-    } else {
-      console.log("No user data found");
-    }
+    updateUserState();
   }, []);
 
   useEffect(() => {

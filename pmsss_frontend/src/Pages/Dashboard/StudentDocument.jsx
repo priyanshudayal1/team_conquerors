@@ -23,7 +23,7 @@ const StudentDocument = () => {
       setUserData(parsedData);
       // Assuming userData contains documents in a JSON object
       const docs = parsedData.data.documents || {};
-      const docsArray = Object.keys(docs).map(key => ({ id: key, name: key, file: docs[key] }));
+      const docsArray = Object.keys(docs).map(key => ({ id: key, name: key, file: docs[key].url }));
       setDocuments(docsArray);
       console.log("User documents:", docsArray);
     } else {
