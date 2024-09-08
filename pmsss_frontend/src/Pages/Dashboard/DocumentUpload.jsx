@@ -100,7 +100,7 @@ const DocumentUploadModal = ({ open }) => {
       maxWidth="lg"
       PaperProps={{
         sx: {
-          height: "100%",
+          height: "80%",
           maxHeight: "100%",
           borderRadius: 2,
           p: 2,
