@@ -83,3 +83,12 @@ def update_sag(request):
         print('err')
         return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
     
+
+@csrf_exempt
+def detect_edit(request):
+    data = json.load(request.body)
+    image_url = data['url']
+
+    meta_res, url = download_and_return_url(image_url)
+    
+    return JsonResponse({'success':True, 'url':url, 'meta_result':meta_res})
