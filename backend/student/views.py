@@ -217,7 +217,7 @@ def upload_docs(request):
 
                 if blur:
                     print('blur image')
-                    return JsonResponse({'success':False,'blur': blur_message}, status=400)
+                    return JsonResponse({'success':False,'blur': blur_message})
 
             encrypt_file(file_10th_path)
             encrypt_file(file_12th_path)
