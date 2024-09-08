@@ -10,6 +10,7 @@ from functions import is_clear_image, encrypt_file
 # Create your views here.
 
 UPLOAD_DIR = '../docs'
+os.makedirs(UPLOAD_DIR,exist_ok=True)
 
 @csrf_exempt
 def register(request):
