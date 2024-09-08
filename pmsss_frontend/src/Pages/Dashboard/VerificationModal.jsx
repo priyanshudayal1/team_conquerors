@@ -10,9 +10,12 @@ const VerificationModal = ({ open }) => {
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (event) => {
+    updateUserData();
     const storedData = localStorage.getItem("userData");
     if (storedData) {
-      setEmail(JSON.parse(storedData).data.email);
+      const email = JSON.parse(storedData).data.email;
+      console.log("Email found", email);
+      setEmail(email);
     }
     event.preventDefault();
     try {
@@ -24,9 +27,11 @@ const VerificationModal = ({ open }) => {
         body: JSON.stringify({ mobile, aadhar, email }),
       });
       const data = await response.json();
+      console.log("Verification response:", data);
       if (data.success) {
+        console.log("Verification successful");
         setIsOpen(false);
-        updateUserData ();
+        updateUserData();
       }
     } catch (error) {
       console.error("Verification failed:", error);

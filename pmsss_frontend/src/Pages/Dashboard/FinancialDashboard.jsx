@@ -95,11 +95,6 @@ const FinancialDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setApplications((prevApplications) =>
-          prevApplications.map((application) =>
-            application.id === transactionDialog.application.id ? { ...application, status: 7, transaction_id: transactionId } : application
-          )
-        );
         setTransactionDialog({ open: false, application: null });
         setTransactionId('');
         updateUserData();
@@ -122,11 +117,6 @@ const FinancialDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setApplications((prevApplications) =>
-          prevApplications.map((application) =>
-            application.id === disburseDialog.application.id ? { ...application, status: 8 } : application
-          )
-        );
         setDisburseDialog({ open: false, application: null });
         updateUserData();
       } else {

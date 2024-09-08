@@ -94,7 +94,7 @@ const DocumentUploadModal = ({ open }) => {
           collegeId: "Upload successful",
         });
         updateUserData();
-        /*window.location.href = "/dashboard/student";*/
+        window.location.href = "/dashboard/student";
       } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
@@ -108,7 +108,7 @@ const DocumentUploadModal = ({ open }) => {
           collegeId: "Upload successful",
         });
         updateUserData();
-        /*window.location.href = "/dashboard/student";*/
+        window.location.href = "/dashboard/student";
       }
     } catch (error) {
       console.error("Error:", error);

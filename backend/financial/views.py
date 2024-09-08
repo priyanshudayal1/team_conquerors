@@ -58,6 +58,7 @@ def transaction_done(request):
     student.status = 7
     student.transaction_id = transaction
     student.save()
+    print('transaction:',student.transaction_id)
     return JsonResponse({'success':True})
 
 @csrf_exempt
