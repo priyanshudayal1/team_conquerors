@@ -211,7 +211,6 @@ def upload_docs(request):
                 'file12th': file_12th_path,
                 'collegeId': college_id_path
             }
-            student.save()
 
             # Checking for Blurred Image
             if forced == 'false':
@@ -219,7 +218,7 @@ def upload_docs(request):
                 file10thblur_message = 'Upload successful'
                 file12thblur_message = 'Upload successful'
                 collegeIdblur_message = 'Upload successful'
-                print('here')
+
                 if file_10th_path and not is_clear_image(file_10th_path):
                     blur = True
                     file10thblur_message = "10th Marksheet is blur"
@@ -233,7 +232,6 @@ def upload_docs(request):
                     collegeIdblur_message = "College ID is blur"
 
                 if blur:
-                    print('blur image')
                     return JsonResponse({'success': False, 'blur': True, 'errors': {'file10th': file10thblur_message, 'file12th': file12thblur_message, 'collegeId': collegeIdblur_message}}, status=400)
 
             if file_10th_path:
@@ -242,6 +240,9 @@ def upload_docs(request):
                 encrypt_file(file_12th_path)
             if college_id_path:
                 encrypt_file(college_id_path)
+
+            student.status = 2
+            student.save()
 
             if not college_id or not email:
                 return JsonResponse({'errors': 'College ID or email is missing'}, status=400)
