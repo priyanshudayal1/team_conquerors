@@ -66,8 +66,6 @@ const DocumentUploadModal = ({ open }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Submitting documents");
-
     setLoading(true);
     const formData = new FormData();
     formData.append("file10th", file10th);
@@ -75,10 +73,6 @@ const DocumentUploadModal = ({ open }) => {
     formData.append("collegeId", collegeId);
     formData.append("email", email);
     formData.append("force", force);
-
-
-    console.log("force:", force);
-
     try {
       const response = await fetch(`${BACKEND_URL}/student/upload_docs`, {
         method: "POST",
