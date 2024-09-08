@@ -16,7 +16,6 @@ def login(request):
         if (sag.password==password and sag.email==email):
             
             list_of_students = Students.objects.filter(status=2).values('email', 'name')
-            
             list_of_students = list(list_of_students)
 
             data={
