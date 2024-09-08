@@ -4,8 +4,13 @@ import { Modal, TextField, Button, Box, Typography } from '@mui/material';
 const VerificationModal = ({ open }) => {
   const [mobile, setMobile] = useState('');
   const [aadhar, setAadhar] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleSubmit = async (event) => {
+    const storedData = localStorage.getItem("userData");
+    if (storedData) {
+      setEmail(JSON.parse(storedData).data.email);
+    }
     event.preventDefault();
     try {
       const response = await fetch('/verifystudent', {
@@ -13,7 +18,7 @@ const VerificationModal = ({ open }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ mobile, aadhar }),
+        body: JSON.stringify({ mobile, aadhar, email }),
       });
       const data = await response.json();
       console.log('Verification successful:', data);

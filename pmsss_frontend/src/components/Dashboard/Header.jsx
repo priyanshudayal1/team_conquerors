@@ -1,6 +1,7 @@
 import { Avatar, Button, Popover } from "@mui/material";
 import { useEffect, useState } from "react";
 import studentUser from "../../../public/userIcon.png";
+import { updateUserData } from "../../utils/helper";
 const Header = ({ title }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -22,6 +23,7 @@ const Header = ({ title }) => {
   const id = open ? "simple-popover" : undefined;
 
   useEffect(() => {
+    updateUserData();
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       setUserData(JSON.parse(storedData));

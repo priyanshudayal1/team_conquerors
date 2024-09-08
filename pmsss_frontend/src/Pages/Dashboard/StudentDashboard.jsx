@@ -19,16 +19,27 @@ import {
 } from "@mui/icons-material";
 
 const stepIcons = [
-  <CheckCircleIcon />,
-  <VerifiedIcon />,
-  <DescriptionIcon />,
-  <AutorenewIcon />,
-  <AssignmentTurnedInIcon />,
-  <ForwardIcon />,
-  <AccountBalanceIcon />,
-  <ThumbUpIcon />,
-  <PaymentIcon />,
+  CheckCircleIcon,
+  VerifiedIcon,
+  DescriptionIcon,
+  AutorenewIcon,
+  AssignmentTurnedInIcon,
+  ForwardIcon,
+  AccountBalanceIcon,
+  ThumbUpIcon,
+  PaymentIcon,
 ];
+
+const StepIcon = ({ icon, active, completed }) => {
+  const IconComponent = stepIcons[icon - 1];
+  return (
+    <IconComponent
+      className={`${
+        completed ? "text-green-500" : active ? "text-blue-500" : "text-gray-500"
+      }`}
+    />
+  );
+};
 
 const steps = [
   "Registered",
@@ -99,7 +110,7 @@ const StudentDashboard = () => {
             >
               {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel icon={stepIcons[index]}>
+                  <StepLabel StepIconComponent={(props) => <StepIcon {...props} icon={index + 1} />}>
                     <span
                       className={`text-md ${
                         index < (userData?.data?.status ?? -1) + 1
