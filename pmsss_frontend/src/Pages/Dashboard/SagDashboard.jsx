@@ -14,6 +14,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { Visibility, CheckCircle, Search } from "@mui/icons-material";
 import Header from "../../components/Dashboard/Header";
@@ -43,6 +44,7 @@ const SagDashboard = () => {
   const [editStatuses, setEditStatuses] = useState({});
   const [warnings, setWarnings] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [approveDialog, setApproveDialog] = useState({ open: false, student: null, document: null });
 
   useEffect(() => {
     // Fetch student information from the backend
@@ -80,20 +82,20 @@ const SagDashboard = () => {
     }
   };
 
-  const handleApprove = async (studentId) => {
+  const handleApprove = async (student, document) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/sag/approve`, {
+      const response = await fetch(`${BACKEND_URL}/sag/approve_doc`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ studentId }),
+        body: JSON.stringify({ email: student.email, documentName: document }),
       });
       const data = await response.json();
       if (data.success) {
         setStudents((prevStudents) =>
-          prevStudents.map((student) =>
-            student.id === studentId ? { ...student, verified: true } : student
+          prevStudents.map((s) =>
+            s.id === student.id ? { ...s, documents: { ...s.documents, [document]: { ...s.documents[document], status: "approved" } } } : s
           )
         );
       }
@@ -116,6 +118,19 @@ const SagDashboard = () => {
 
   const handleCloseModal = () => {
     setSelectedDocument(null);
+  };
+
+  const handleOpenApproveDialog = (student, document) => {
+    setApproveDialog({ open: true, student, document });
+  };
+
+  const handleCloseApproveDialog = () => {
+    setApproveDialog({ open: false, student: null, document: null });
+  };
+
+  const handleConfirmApprove = () => {
+    handleApprove(approveDialog.student, approveDialog.document);
+    handleCloseApproveDialog();
   };
 
   return (
@@ -155,7 +170,7 @@ const SagDashboard = () => {
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={() => handleApprove(student.id)}
+                      onClick={() => handleOpenApproveDialog(student, "all")}
                       sx={{ ml: 2 }}
                       disabled={student.verified}
                     >
@@ -175,7 +190,7 @@ const SagDashboard = () => {
                   <TableRow>
                     <TableCell colSpan={7}>
                       <Box sx={{ display: 'flex', overflowX: 'auto' }}>
-                        {Object.entries(student.documents).map(([key, { url }], index) => (
+                        {Object.entries(student.documents).map(([key, { url, status }], index) => (
                           <Box key={index} sx={{ minWidth: 300, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
                             <Typography variant="body2">{documentLabels[key]}</Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
@@ -194,13 +209,20 @@ const SagDashboard = () => {
                               >
                                 Detect by AI
                               </Button>
-                              <Button
-                                variant="outlined"
-                                color="success"
-                                startIcon={<CheckCircle />}
-                              >
-                                Approve
-                              </Button>
+                              {status === "approved" ? (
+                                <Typography variant="body2" color="success.main">
+                                  Approved
+                                </Typography>
+                              ) : (
+                                <Button
+                                  variant="outlined"
+                                  color="success"
+                                  startIcon={<CheckCircle />}
+                                  onClick={() => handleOpenApproveDialog(student, key)}
+                                >
+                                  Approve
+                                </Button>
+                              )}
                             </Box>
                           </Box>
                         ))}
@@ -227,6 +249,22 @@ const SagDashboard = () => {
             <Box component="img" src={selectedDocument} alt="Document" sx={{ width: '100%', height: 'auto' }} />
           )}
         </DialogContent>
+      </Dialog>
+      <Dialog open={approveDialog.open} onClose={handleCloseApproveDialog}>
+        <DialogTitle>Confirm Approval</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to approve {documentLabels[approveDialog.document]} for {approveDialog.student?.name}?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseApproveDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmApprove} color="secondary">
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </Box>
   );

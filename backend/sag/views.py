@@ -47,4 +47,27 @@ def update_sag(request):
     except Exception as e:
         print('err')
         return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
-    
+
+
+
+
+@csrf_exempt
+def approve_doc(request):
+    data = json.loads(request.body)
+    print('data:', data)
+    email = data['email']
+    doc_name = data['documentName']
+    try:
+        student = Students.objects.get(email=email)
+        docs = student.documents
+        print('docs:', docs)
+
+        if doc_name in docs:
+            docs[doc_name]['status'] = 'approved'
+            student.documents = docs
+            student.save()
+            return JsonResponse({'message': 'Document Approved', 'success': True})
+        else:
+            return JsonResponse({'message': 'Document not found', 'success': False}, status=404)
+    except Exception as e:
+        return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
