@@ -53,7 +53,11 @@ def update_financial(request):
 def transaction_done(request):
     data = json.loads(request)
     student_email = data['email']
+    transaction = data['transaction']
 
     student = Students.objects.get(email=student_email)
     student.status = 7
+    student.transaction_id = transaction
     student.save()
+
+    return JsonResponse({'success':True})
