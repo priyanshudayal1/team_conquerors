@@ -53,6 +53,7 @@ const SagDashboard = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    updateUserData();
     // Fetch student information from the backend
     const storedData = localStorage.getItem("userData");
     if (storedData) {
@@ -187,86 +188,94 @@ const SagDashboard = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {students.map((student) => (
-              <React.Fragment key={student.id}>
-                <TableRow>
-                  <TableCell>{student.name}</TableCell>
-                  <TableCell>{student.email}</TableCell>
-                  <TableCell>{student.college}</TableCell>
-                  <TableCell>{student.dob}</TableCell>
-                  <TableCell>{getStatusByIndex(student.status)}</TableCell>
-                  <TableCell>{student.feedback_given ? student.feedback : "Not Given"}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="default"
-                      onClick={() => handleExpandRow(student.id)}
-                      sx={{ ml: 2 }}
-                    >
-                      {expandedRow === student.id ? "Hide" : "Show"} Documents
-                    </Button>
-                    {
-                      !student.feedback_given &&
-                      <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<Feedback />}
-                      onClick={() => handleOpenFeedbackDialog(student)}
-                      sx={{ ml: 2 }}
-                    >
-                      Add Feedback
-                    </Button>
-                    }
-                    
-                  </TableCell>
-                </TableRow>
-                {expandedRow === student.id && (
+            {students.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  No students found
+                </TableCell>
+              </TableRow>
+            ) : (
+              students.map((student) => (
+                <React.Fragment key={student.id}>
                   <TableRow>
-                    <TableCell colSpan={7}>
-                      <Box sx={{ display: 'flex', overflowX: 'auto', justifyContent: 'space-evenly' }}>
-                        {Object.entries(student.documents).map(([key, { url, status }], index) => (
-                          <Box key={key} sx={{ minWidth: 400, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
-                            <Typography variant="body2">{documentLabels[key]}</Typography>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, alignItems: 'center' }}>
-                              <Button
-                                variant="outlined"
-                                color="primary"
-                                startIcon={<Visibility />}
-                                onClick={() => handleViewDocument(url)}
-                              >
-                                View
-                              </Button>
-                              <Button
-                                variant="outlined"
-                                color="secondary"
-                                startIcon={<Search />}
-                                onClick={() => handleDetectByAI(url)}
-                              >
-                                Detect by AI
-                              </Button>
-                              {status === "approved" ? (
-                                <Typography variant="body2" color="success.main">
-                                  Approved
-                                </Typography>
-                              ) : (
-                                <Button
-                                  variant="outlined"
-                                  color="success"
-                                  startIcon={<CheckCircle />}
-                                  onClick={() => handleOpenApproveDialog(student, key)}
-                                >
-                                  Approve
-                                </Button>
-                              )}
-                            </Box>
-                          </Box>
-                        ))}
-                      </Box>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.email}</TableCell>
+                    <TableCell>{student.college}</TableCell>
+                    <TableCell>{student.dob}</TableCell>
+                    <TableCell>{getStatusByIndex(student.status)}</TableCell>
+                    <TableCell>{student.feedback_given ? student.feedback : "Not Given"}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="default"
+                        onClick={() => handleExpandRow(student.id)}
+                        sx={{ ml: 2 }}
+                      >
+                        {expandedRow === student.id ? "Hide" : "Show"} Documents
+                      </Button>
+                      {
+                        !student.feedback_given &&
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Feedback />}
+                        onClick={() => handleOpenFeedbackDialog(student)}
+                        sx={{ ml: 2 }}
+                      >
+                        Add Feedback
+                      </Button>
+                      }
+                      
                     </TableCell>
                   </TableRow>
-                )}
-              </React.Fragment>
-            ))}
+                  {expandedRow === student.id && (
+                    <TableRow>
+                      <TableCell colSpan={7}>
+                        <Box sx={{ display: 'flex', overflowX: 'auto', justifyContent: 'space-evenly' }}>
+                          {Object.entries(student.documents).map(([key, { url, status }], index) => (
+                            <Box key={key} sx={{ minWidth: 400, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
+                              <Typography variant="body2">{documentLabels[key]}</Typography>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, alignItems: 'center' }}>
+                                <Button
+                                  variant="outlined"
+                                  color="primary"
+                                  startIcon={<Visibility />}
+                                  onClick={() => handleViewDocument(url)}
+                                >
+                                  View
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  color="secondary"
+                                  startIcon={<Search />}
+                                  onClick={() => handleDetectByAI(url)}
+                                >
+                                  Detect by AI
+                                </Button>
+                                {status === "approved" ? (
+                                  <Typography variant="body2" color="success.main">
+                                    Approved
+                                  </Typography>
+                                ) : (
+                                  <Button
+                                    variant="outlined"
+                                    color="success"
+                                    startIcon={<CheckCircle />}
+                                    onClick={() => handleOpenApproveDialog(student, key)}
+                                  >
+                                    Approve
+                                  </Button>
+                                )}
+                              </Box>
+                            </Box>
+                          ))}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

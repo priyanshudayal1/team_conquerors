@@ -40,6 +40,7 @@ const FinancialDashboard = () => {
   const [disburseDialog, setDisburseDialog] = useState({ open: false, application: null });
 
   useEffect(() => {
+    updateUserData();
     // Fetch student information from the backend
     const storedData = localStorage.getItem("userData");
     if (storedData) {
@@ -164,50 +165,58 @@ const FinancialDashboard = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {applications.map((application) => (
-              <TableRow key={application.email}>
-                <TableCell>{application.name}</TableCell>
-                <TableCell>{application.account_number}</TableCell>
-                <TableCell>{application.ifsc}</TableCell>
-                <TableCell>
-                  {application.transaction_id ? (
-                    application.transaction_id
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleOpenTransactionDialog(application)}
-                    >
-                      Add Transaction ID
-                    </Button>
-                  )}
-                </TableCell>
-                <TableCell>{getStatusByIndex(application.status)}</TableCell>
-                <TableCell>
-                  {application.status === 7 ? (
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => handleOpenDisburseDialog(application)}
-                    >
-                      Disburse
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        setSelectedApplication(application.id);
-                        handleUpdateStatus(application.email);
-                      }}
-                      disabled={application.status === 'Updated'}
-                    >
-                      Update Status
-                    </Button>
-                  )}
+            {applications.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  No students found
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              applications.map((application) => (
+                <TableRow key={application.email}>
+                  <TableCell>{application.name}</TableCell>
+                  <TableCell>{application.account_number}</TableCell>
+                  <TableCell>{application.ifsc}</TableCell>
+                  <TableCell>
+                    {application.transaction_id ? (
+                      application.transaction_id
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleOpenTransactionDialog(application)}
+                      >
+                        Add Transaction ID
+                      </Button>
+                    )}
+                  </TableCell>
+                  <TableCell>{getStatusByIndex(application.status)}</TableCell>
+                  <TableCell>
+                    {application.status === 7 ? (
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => handleOpenDisburseDialog(application)}
+                      >
+                        Disburse
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          setSelectedApplication(application.id);
+                          handleUpdateStatus(application.email);
+                        }}
+                        disabled={application.status === 'Updated'}
+                      >
+                        Update Status
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

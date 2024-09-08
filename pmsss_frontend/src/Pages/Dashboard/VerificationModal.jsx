@@ -7,13 +7,14 @@ const VerificationModal = ({ open }) => {
   const [isOpen, setIsOpen] = useState(open);
   const [mobile, setMobile] = useState("");
   const [aadhar, setAadhar] = useState("");
-  const [email, setEmail] = useState("");
+  const [useremail, setEmail] = useState("");
 
   const handleSubmit = async (event) => {
     updateUserData();
+    let email='';
     const storedData = localStorage.getItem("userData");
     if (storedData) {
-      const email = JSON.parse(storedData).data.email;
+      email = JSON.parse(storedData).data.email;
       console.log("Email found", email);
       setEmail(email);
     }

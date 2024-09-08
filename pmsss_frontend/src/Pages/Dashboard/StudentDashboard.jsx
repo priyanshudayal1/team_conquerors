@@ -62,20 +62,23 @@ const StudentDashboard = () => {
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
   const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] =
     useState(false);
-    console.log("User data found", userData?.data?.status);
 
   useEffect(() => {
     updateUserData();
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       setUserData(JSON.parse(storedData));
-      
     } else {
       console.log("No user data found");
     }
   }, [isDocumentUploadModalOpen, isVerificationModalOpen]);
 
   useEffect(() => {
+    updateUserData();
+    console.log("User data:", userData?.data?.status);
+    if (userData?.data?.status != 0) {
+      setIsVerificationModalOpen(false);
+    }
     if (userData?.data?.status === 0) {
       setIsVerificationModalOpen(true);
       updateUserData();
@@ -121,7 +124,7 @@ const StudentDashboard = () => {
                       className={`text-md ${
                         index < (userData?.data?.status ?? -1) + 1
                           ? "text-green-500"
-                          : index === (userData?.data?.status) + 1
+                          : index === userData?.data?.status + 1
                           ? "text-blue-500"
                           : "text-gray-500"
                       }`}
