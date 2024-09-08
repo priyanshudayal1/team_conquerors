@@ -74,6 +74,11 @@ const DocumentUploadModal = ({ open }) => {
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
+        setError({
+          file10th: "Upload successful",
+          file12th: "Upload successful",
+          collegeId: "Upload successful",
+        });
       } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
