@@ -105,6 +105,7 @@ def update_user(request):
     try:
         student = Students.objects.get(email=email)
         documents = student.documents
+        print('documents:',documents)
         if documents is None:
             documents = []
         user_data = {
@@ -166,6 +167,8 @@ def verify_user(request):
     return JsonResponse({'success':False})
 
 
+
+
 @csrf_exempt
 def upload_docs(request):
     print('WWW')
@@ -178,6 +181,10 @@ def upload_docs(request):
             forced = request.POST.get('force')
 
             email_user = email.split('@')[0]
+
+            file_10th_path = None
+            file_12th_path = None
+            college_id_path = None
 
             if file_10th:
                 file_10th_path = os.path.join(UPLOAD_DIR, f'{email_user}_10th.jpg')
@@ -197,37 +204,50 @@ def upload_docs(request):
                     for chunk in college_id.chunks():
                         destination.write(chunk)
 
+            student = Students.objects.get(email=email)
+            student.documents = {
+                'file10th': file_10th_path,
+                'file12th': file_12th_path,
+                'collegeId': college_id_path
+            }
+            student.save()
+
             # Checking for Blurred Image
             if forced == 'false':
                 blur = False
-                blur_message = "These Files Seem Blur Please Check: "
+                file10thblur_message = 'Upload successful'
+                file12thblur_message = 'Upload successful'
+                collegeIdblur_message = 'Upload successful'
                 print('here')
-                if not is_clear_image(file_10th_path):
+                if file_10th_path and not is_clear_image(file_10th_path):
                     blur = True
-                    blur_message += "10th Marksheet"
+                    file10thblur_message = "10th Marksheet is blur"
 
-                if not is_clear_image(file_12th_path):
+                if file_12th_path and not is_clear_image(file_12th_path):
                     blur = True
-                    blur_message += "12th Marksheet"
+                    file12thblur_message = "12th Marksheet is blur"
 
-                if not is_clear_image(college_id_path):
+                if college_id_path and not is_clear_image(college_id_path):
                     blur = True
-                    blur_message += "College ID"
+                    collegeIdblur_message = "College ID is blur"
 
                 if blur:
                     print('blur image')
-                    return JsonResponse({'success':False,'blur': blur_message})
+                    return JsonResponse({'success': False, 'blur': True, 'errors': {'file10th': file10thblur_message, 'file12th': file12thblur_message, 'collegeId': collegeIdblur_message}}, status=400)
 
-            encrypt_file(file_10th_path)
-            encrypt_file(file_12th_path)
-            encrypt_file(college_id_path)
+            if file_10th_path:
+                encrypt_file(file_10th_path)
+            if file_12th_path:
+                encrypt_file(file_12th_path)
+            if college_id_path:
+                encrypt_file(college_id_path)
 
             if not college_id or not email:
                 return JsonResponse({'errors': 'College ID or email is missing'}, status=400)
 
-            return JsonResponse({'success':True,'message': 'Files uploaded successfully'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Files uploaded successfully'}, status=200)
         except Exception as e:
-            return JsonResponse({'success':False,'errors': str(e)}, status=500)
+            return JsonResponse({'success': False, 'errors': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 

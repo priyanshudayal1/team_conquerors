@@ -56,7 +56,7 @@ const DocumentUploadModal = ({ open }) => {
     formData.append("file12th", file12th);
     formData.append("collegeId", collegeId);
     formData.append("email", email);
-    formData.append("force",false);
+    formData.append("force", false);
 
     console.log("FormData:", formData);
 
@@ -68,13 +68,13 @@ const DocumentUploadModal = ({ open }) => {
       const data = await response.json();
       console.log("Response:", data);
       setLoading(false);
-      if (response.ok) {
+      if (response.success) {
         setStatus({
           file10th: "Upload successful",
           file12th: "Upload successful",
           collegeId: "Upload successful",
         });
-      } else {
+      } else if (data.blur) {
         setError({
           file10th: data.errors?.file10th || "Upload failed",
           file12th: data.errors?.file12th || "Upload failed",
@@ -192,7 +192,14 @@ const DocumentUploadModal = ({ open }) => {
                   <CircularProgress size={24} sx={{ ml: 2 }} />
                 )}
                 {error[fileType] && (
-                  <Alert severity="error" sx={{ ml: 2 }}>
+                  <Alert
+                    severity={
+                      error[fileType].includes("successful")
+                        ? "success"
+                        : "error"
+                    }
+                    sx={{ ml: 2 }}
+                  >
                     {error[fileType]}
                   </Alert>
                 )}
