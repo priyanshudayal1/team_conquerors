@@ -215,7 +215,7 @@ def upload_docs(request):
                     blur_message += "College ID"
 
                 if blur:
-                    return JsonResponse({'success':False,'message': blur_message}, status=400)
+                    return JsonResponse({'success':False,'blur': blur_message}, status=400)
 
             encrypt_file(file_10th_path)
             encrypt_file(file_12th_path)
