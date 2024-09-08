@@ -123,6 +123,7 @@ const FinancialDashboard = () => {
       if (data.success) {
         setDisburseDialog({ open: false, application: null });
         updateUserData();
+        window.location.reload();
       } else {
         console.error('Failed to disburse:', data.message);
       }
