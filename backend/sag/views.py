@@ -49,7 +49,7 @@ def login(request):
     try:
         sag=SAGBureau.objects.get(email=email)
         if (sag.password==password and sag.email==email):
-            list_of_students = Students.objects.filter(status=2).values('email', 'name','status','college','dob','phone','address','feedback','feedback_given','documents')
+            list_of_students = Students.objects.filter(status__in=[2,3,4]).values('email', 'name','status','college','dob','phone','address','feedback','feedback_given','documents')
             list_of_students = list(list_of_students)
             data={
                 'list_of_students':list_of_students,
@@ -70,15 +70,15 @@ def update_sag(request):
     email = data['email']
     try:
         sag = SAGBureau.objects.get(email=email)
-        list_of_students = Students.objects.filter(status=2).values('email', 'name','status','college','dob','phone','address','feedback','feedback_given','documents')
+        list_of_students = Students.objects.filter(status__in=[2, 3,4]).values('email', 'name', 'status', 'college', 'dob', 'phone', 'address', 'feedback', 'feedback_given', 'documents')
         list_of_students = list(list_of_students)
         data = {
             'list_of_students': list_of_students,
             'email': sag.email,
             'name': sag.name
         }
-        print('data:',data)
-        return JsonResponse({'message': 'SAG Details', 'data': data, 'success': True,'role':'sag'})
+        print('data:', data)
+        return JsonResponse({'message': 'SAG Details', 'data': data, 'success': True, 'role': 'sag'})
     except Exception as e:
         print('err')
         return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
@@ -100,12 +100,12 @@ def approve_doc(request):
         if doc_name in docs:
             docs[doc_name]['status'] = 'approved'
             student.documents = docs
-            student.status = 3
+            student.status = 4
 
             # Check if all documents are approved
             all_approved = all(doc['status'] == 'approved' for doc in docs.values())
             if all_approved:
-                student.status = 4
+                student.status = 5
 
             student.save()
             return JsonResponse({'message': 'Document Approved', 'success': True})

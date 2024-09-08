@@ -14,7 +14,7 @@ def login(request):
     try:
         financial = FinancialBureau.objects.get(email=email)
         if financial.password == password and financial.email == email:
-            list_of_students = Students.objects.filter(status=4).values('name', 'account_number','ifsc','college','phone','address')
+            list_of_students = Students.objects.filter(status__in=[5,6,7]).values('name', 'account_number','ifsc','college','phone','address','status','email')
             list_of_students = list(list_of_students)
             data = {
                 'list_of_students': list_of_students,
@@ -32,11 +32,10 @@ def login(request):
 def update_financial(request):
     data = json.loads(request.body)
     email = data['email']
-
     try:
         financial = FinancialBureau.objects.get(email=email)
 
-        list_of_students = Students.objects.filter(status=4).values('name', 'account_number','ifsc','college','phone','address')
+        list_of_students = Students.objects.filter(status__in=[5,6,7]).values('name', 'account_number','ifsc','college','phone','address','status','email')
         list_of_students = list(list_of_students)
         data = {
             'list_of_students': list_of_students,
@@ -51,13 +50,21 @@ def update_financial(request):
 
 @csrf_exempt
 def transaction_done(request):
-    data = json.loads(request)
+    data = json.loads(request.body)
+    print('data:',data) 
     student_email = data['email']
     transaction = data['transaction']
-
     student = Students.objects.get(email=student_email)
     student.status = 7
     student.transaction_id = transaction
     student.save()
+    return JsonResponse({'success':True})
 
+@csrf_exempt
+def disburse(request):
+    data = json.loads(request.body)
+    email = data['email']
+    student = Students.objects.get(email=email)
+    student.status = 8
+    student.save()
     return JsonResponse({'success':True})

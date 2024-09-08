@@ -16,7 +16,7 @@ class Students(models.Model):
     status=models.IntegerField(default=0)
     phone = models.CharField(max_length=10)
     dob = models.CharField(max_length=10, null = True)
-    transaction_id = models.CharField(max_length=50, null = True)
+    transaction_id = models.CharField(max_length=50, null = True, blank = True)
     address = models.TextField(null=True)
     feedback = models.TextField(null=True, blank=True)
     feedback_given = models.BooleanField(default=False)

@@ -50,8 +50,8 @@ const steps = [
   "Verified",
   "Documents Submitted",
   "Automatic Verification",
-  "Final Verification",
   "Forwarded to SAG Bureau",
+  "Final Verification",
   "Forwarded to Financial Bureau",
   "Scholarship Approval",
   "Disbursed",
@@ -62,12 +62,14 @@ const StudentDashboard = () => {
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
   const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] =
     useState(false);
+    console.log("User data found", userData?.data?.status);
 
   useEffect(() => {
     updateUserData();
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       setUserData(JSON.parse(storedData));
+      
     } else {
       console.log("No user data found");
     }
@@ -119,7 +121,7 @@ const StudentDashboard = () => {
                       className={`text-md ${
                         index < (userData?.data?.status ?? -1) + 1
                           ? "text-green-500"
-                          : index === (userData?.data?.status ?? -1) + 1
+                          : index === (userData?.data?.status) + 1
                           ? "text-blue-500"
                           : "text-gray-500"
                       }`}
