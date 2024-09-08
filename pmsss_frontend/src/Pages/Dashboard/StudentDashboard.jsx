@@ -63,36 +63,39 @@ const StudentDashboard = () => {
   const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] =
     useState(false);
 
-  useEffect(() => {
-    updateUserData();
+  function updateUserState() {
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       setUserData(JSON.parse(storedData));
     } else {
       console.log("No user data found");
     }
-  }, [isDocumentUploadModalOpen, isVerificationModalOpen]);
+  }
+  useEffect(() => {
+    const storedData = localStorage.getItem("userData");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    } else {
+      console.log("No user data found");
+    }
+  }, []);
 
   useEffect(() => {
-    updateUserData();
-    console.log("User data:", userData?.data?.status);
-    if (userData?.data?.status != 0) {
-      setIsVerificationModalOpen(false);
-    }
     if (userData?.data?.status === 0) {
       setIsVerificationModalOpen(true);
-      updateUserData();
+      setIsDocumentUploadModalOpen(false);
+      updateUserState();
     } else if (userData?.data?.status === 1) {
       setIsVerificationModalOpen(false);
       setIsDocumentUploadModalOpen(true);
-      updateUserData();
+      updateUserState();
     } else if (userData?.data?.status === 2) {
-      setIsDocumentUploadModalOpen(false);
       setIsVerificationModalOpen(false);
+      setIsDocumentUploadModalOpen(false);
+      updateUserState();
       console.log("Documents submitted");
-      updateUserData();
     }
-  }, [userData, isDocumentUploadModalOpen, isVerificationModalOpen]);
+  }, [userData]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">

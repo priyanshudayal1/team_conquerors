@@ -4,14 +4,13 @@ import { BACKEND_URL } from "../../utils/constants";
 import { updateUserData } from "../../utils/helper";
 
 const VerificationModal = ({ open }) => {
-  const [isOpen, setIsOpen] = useState(open);
   const [mobile, setMobile] = useState("");
   const [aadhar, setAadhar] = useState("");
   const [useremail, setEmail] = useState("");
 
   const handleSubmit = async (event) => {
     updateUserData();
-    let email='';
+    let email = '';
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       email = JSON.parse(storedData).data.email;
@@ -31,7 +30,6 @@ const VerificationModal = ({ open }) => {
       console.log("Verification response:", data);
       if (data.success) {
         console.log("Verification successful");
-        setIsOpen(false);
         updateUserData();
       }
     } catch (error) {
@@ -40,7 +38,7 @@ const VerificationModal = ({ open }) => {
   };
 
   return (
-    <Modal open={isOpen}>
+    <Modal open={open}>
       <Box
         sx={{
           position: "absolute",
