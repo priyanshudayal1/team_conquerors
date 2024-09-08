@@ -15,7 +15,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { BACKEND_URL } from "../utils/constants";
 
-
 function Login() {
   const [role, setRole] = useState("student");
   const [responseMessage, setResponseMessage] = useState("");
@@ -44,11 +43,11 @@ function Login() {
         });
         const data = await response.json();
         if (data.success) {
-          setResponseMessage("Login Successful");
-          sessionStorage.setItem("data", data.data);
+          // Store data in localStorage
+          localStorage.setItem("userData", JSON.stringify(data.data));
           window.location.href = "/dashboard/student";
         } else {
-          setResponseMessage("Invalid Credentials");
+          setResponseMessage(data.message || "Invalid Credentials");
         }
       } catch (error) {
         console.error("Error:", error);

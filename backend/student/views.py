@@ -59,8 +59,8 @@ def login(request):
                 'class10_percent':student.class10_percent,
                 'class12_percent':student.class12_percent,
                 'phone':student.phone,
-                'documents':student.documents
-            }
+                'status':student.status,
+                }
             return JsonResponse({'message':'Login Successful','success':True,'data':data})
         else:
             return JsonResponse({'message':'Invalid Credentials','success':False})
