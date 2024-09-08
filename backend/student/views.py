@@ -10,6 +10,7 @@ from functions import is_clear_image, encrypt_file
 # Create your views here.
 
 UPLOAD_DIR = '../docs'
+os.makedirs(UPLOAD_DIR,exist_ok=True)
 
 @csrf_exempt
 def register(request):
@@ -227,6 +228,7 @@ def upload_docs(request):
 
             return JsonResponse({'success':True,'message': 'Files uploaded successfully'}, status=200)
         except Exception as e:
+            print(e)
             return JsonResponse({'success':False,'errors': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
