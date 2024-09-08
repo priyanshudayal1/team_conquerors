@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from backend.models import SAGBureau
+from backend.models import SAGBureau, Students
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -14,9 +14,11 @@ def login(request):
     try:
         sag=SAGBureau.objects.get(email=email)
         if (sag.password==password and sag.email==email):
-            list_of_students=sag.list_of_students
-            if list_of_students is None:
-                list_of_students=[]
+            
+            list_of_students = Students.objects.filter(status=2).values('email', 'name')
+            
+            list_of_students = list(list_of_students)
+
             data={
                 'list_of_students':list_of_students,
                 'email':sag.email,
