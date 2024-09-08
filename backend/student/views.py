@@ -172,7 +172,7 @@ def upload_docs(request):
         try:
             file_10th = request.FILES.get('file10th')
             file_12th = request.FILES.get('file12th')
-            college_id = request.POST.get('collegeId')
+            college_id = request.FILES.get('collegeId')
             email = request.POST.get('email')
 
             if file_10th:
