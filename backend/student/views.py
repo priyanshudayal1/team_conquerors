@@ -129,10 +129,10 @@ def update_user(request):
     except:
         return JsonResponse({"message": "User not found", "success": False})
 
-
+@csrf_exempt
 def verify_user(request):
     data = json.loads(request.body)
-
+    print('data:',data)
     email = data["email"]
     aadhar_number = data["aadhar"]
 
@@ -158,8 +158,7 @@ def verify_user(request):
         student.status = 1
         student.dob = aadhar_numbers[aadhar_number]['dob']
         student.address = aadhar_numbers[aadhar_number]['address']
-        # student.name = aadhar_numbers[aadhar_number]['name']
-
+        student.save()
         return JsonResponse({'success':True})
 
     return JsonResponse({'success':False})

@@ -1,10 +1,13 @@
-import { useState } from 'react';
-import { Modal, TextField, Button, Box, Typography } from '@mui/material';
+import { useState } from "react";
+import { Modal, TextField, Button, Box, Typography } from "@mui/material";
+import { BACKEND_URL } from "../../utils/constants";
+import { updateUserData } from "../../utils/helper";
 
 const VerificationModal = ({ open }) => {
-  const [mobile, setMobile] = useState('');
-  const [aadhar, setAadhar] = useState('');
-  const [email, setEmail] = useState('');
+  const [isOpen, setIsOpen] = useState(true);
+  const [mobile, setMobile] = useState("");
+  const [aadhar, setAadhar] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (event) => {
     const storedData = localStorage.getItem("userData");
@@ -13,30 +16,33 @@ const VerificationModal = ({ open }) => {
     }
     event.preventDefault();
     try {
-      const response = await fetch('/verifystudent', {
-        method: 'POST',
+      const response = await fetch(`${BACKEND_URL}/student/verify_user`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ mobile, aadhar, email }),
       });
       const data = await response.json();
-      console.log('Verification successful:', data);
+      if (data.success) {
+        setIsOpen(false);
+        updateUserData ();
+      }
     } catch (error) {
-      console.error('Verification failed:', error);
+      console.error("Verification failed:", error);
     }
   };
 
   return (
-    <Modal open={open}>
+    <Modal open={isOpen}>
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           width: 400,
-          bgcolor: 'background.paper',
+          bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
@@ -62,7 +68,13 @@ const VerificationModal = ({ open }) => {
             margin="normal"
             required
           />
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
             Verify
           </Button>
         </form>
