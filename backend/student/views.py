@@ -167,6 +167,7 @@ def verify_user(request):
 
 @csrf_exempt
 def upload_docs(request):
+    print('WWW')
     if request.method == 'POST':
         try:
             file_10th = request.FILES.get('file10th')
