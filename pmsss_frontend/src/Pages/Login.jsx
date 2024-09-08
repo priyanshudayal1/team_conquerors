@@ -30,8 +30,16 @@ function Login() {
       password: Yup.string().required("Password is required"),
     }),
     onSubmit: async (values) => {
+      const roleToUrlMap = {
+        student: `${BACKEND_URL}/student/login`,
+        "SAG bureau": `${BACKEND_URL}/sag/login`,
+        "Financial bureau": `${BACKEND_URL}/financial/login`,
+      };
+
+      const url = roleToUrlMap[values.role];
+
       try {
-        const response = await fetch(`${BACKEND_URL}/student/login`, {
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -45,7 +53,7 @@ function Login() {
         if (data.success) {
           // Store data in localStorage
           localStorage.setItem("userData", JSON.stringify(data.data));
-          window.location.href = "/dashboard/student";
+          window.location.href = `${data.url}`;
         } else {
           setResponseMessage(data.message || "Invalid Credentials");
         }
@@ -65,10 +73,10 @@ function Login() {
     switch (role) {
       case "student":
         return "Student Login";
-      case "SAG burea":
-        return "SAG Burea Login";
-      case "Financial burea":
-        return "Financial Burea Login";
+      case "SAG bureau":
+        return "SAG Bureau Login";
+      case "Financial bureau":
+        return "Financial Bureau Login";
       default:
         return "Login Page";
     }
@@ -128,8 +136,8 @@ function Login() {
               onChange={handleRoleChange}
             >
               <MenuItem value="student">Student</MenuItem>
-              <MenuItem value="SAG burea">SAG Burea</MenuItem>
-              <MenuItem value="Financial burea">Financial Burea</MenuItem>
+              <MenuItem value="SAG bureau">SAG Bureau</MenuItem>
+              <MenuItem value="Financial bureau">Financial Bureau</MenuItem>
             </Select>
           </FormControl>
           <Button color="primary" variant="contained" fullWidth type="submit">
