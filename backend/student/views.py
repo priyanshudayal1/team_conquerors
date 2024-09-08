@@ -160,7 +160,6 @@ def verify_user(request):
         student.address = aadhar_numbers[aadhar_number]['address']
         student.save()
         return JsonResponse({'success':True})
-
     return JsonResponse({'success':False})
 
 
