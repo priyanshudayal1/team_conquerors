@@ -107,6 +107,7 @@ def approve_doc(request):
     except Exception as e:
         return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
 
+
 @csrf_exempt
 def detect_edit(request):
     data = json.load(request.body)
