@@ -167,7 +167,8 @@ if __name__ == '__main__':
     # print('Yes Clear Image' if is_clear_image('test2.jpg') else 'Not Clear Image')
 
     # For testing Photoshop images or edited images
-    # analyze_noise('test1.jpg')
+    analyze_noise('temper.jpg')
+    print(extract_exif('test1.jpg'))
 
     # For Testing Aadhar API
     # aadhar_num = input('Enter Your Aadhar Number: ')
@@ -185,4 +186,4 @@ if __name__ == '__main__':
     
     # encrypt_file('test_enc.jpg')
 
-    decrypt_file('test_enc.jpg')
+    # decrypt_file('test_enc.jpg')

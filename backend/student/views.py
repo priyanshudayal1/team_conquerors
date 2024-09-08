@@ -193,6 +193,7 @@ def upload_docs(request):
             email = request.POST.get('email')
             forced = request.POST.get('force')
             email_user = email.split('@')[0]
+            
             if file_10th:
                 response = cloudinary.uploader.upload(file_10th, public_id=f'{email_user}_10th')
                 file_10th_url = response['secure_url']
