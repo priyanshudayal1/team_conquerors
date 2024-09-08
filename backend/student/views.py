@@ -164,3 +164,9 @@ def verify_user(request):
     return JsonResponse({'success':False})
 
 
+def upload_doc(request):
+    data = json.loads(request.body)
+    # print('data:',data)
+    email = data["email"]
+    student = Students.objects.get(email=email)
+
