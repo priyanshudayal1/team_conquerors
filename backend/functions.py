@@ -85,9 +85,6 @@ def is_clear_image(image_path):
     """
     text = text_from_image(image_path)
 
-    # For testing purpose only remove on prod
-    # print(text)
-
     if len(text) > 20:
         return True
     return False

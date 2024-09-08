@@ -5,6 +5,7 @@ from backend.models import Students
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
 import os
+from functions import is_clear_image, encrypt_file
 
 # Create your views here.
 
@@ -174,6 +175,7 @@ def upload_docs(request):
             file_12th = request.FILES.get('file12th')
             college_id = request.FILES.get('collegeId')
             email = request.POST.get('email')
+            forced = request.POST.get('force')
 
             email_user = email.split('@')[0]
 
@@ -195,12 +197,36 @@ def upload_docs(request):
                     for chunk in college_id.chunks():
                         destination.write(chunk)
 
+            # Checking for Blurred Image
+            if forced == 'false':
+                blur = False
+                blur_message = "These Files Seem Blur Please Check: "
+
+                if not is_clear_image(file_10th_path):
+                    blur = True
+                    blur_message += "10th Marksheet"
+
+                if not is_clear_image(file_12th_path):
+                    blur = True
+                    blur_message += "12th Marksheet"
+
+                if not is_clear_image(college_id_path):
+                    blur = True
+                    blur_message += "College ID"
+
+                if blur:
+                    return JsonResponse({'success':False,'message': blur_message}, status=400)
+
+            encrypt_file(file_10th_path)
+            encrypt_file(file_12th_path)
+            encrypt_file(college_id_path)
+
             if not college_id or not email:
                 return JsonResponse({'errors': 'College ID or email is missing'}, status=400)
 
-            return JsonResponse({'message': 'Files uploaded successfully'}, status=200)
+            return JsonResponse({'success':True,'message': 'Files uploaded successfully'}, status=200)
         except Exception as e:
-            return JsonResponse({'errors': str(e)}, status=500)
+            return JsonResponse({'success':False,'errors': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
