@@ -28,7 +28,7 @@ const StudentDocument = () => {
     <div className="flex flex-col md:flex-row h-screen">
       <Sidebar />
       <div className="flex-1 p-10 bg-gray-100">
-        <Header />
+        <Header title={'Document'} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {documents.map((doc) => (
             <DocumentCard

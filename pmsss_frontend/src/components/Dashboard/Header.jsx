@@ -1,6 +1,6 @@
 import { Avatar, Button, Popover } from "@mui/material";
 import { useEffect, useState } from "react";
-
+import studentUser from "../../../public/userIcon.png";
 const Header = ({ title }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -41,7 +41,7 @@ const Header = ({ title }) => {
         <p className="text-lg">Welcome, {userData ? userData.data.name : ""} !</p>
         <Avatar
           alt="user"
-          src={userData?.data ? userData?.data?.avatar : ""}
+          src={userData?.role==='student' ? studentUser : ""}
           onClick={handleAvatarClick}
           style={{ cursor: "pointer" }}
         />

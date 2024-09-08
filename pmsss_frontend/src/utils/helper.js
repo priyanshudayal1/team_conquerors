@@ -14,7 +14,7 @@ export const updateUserData = async () => {
             });
             const data = await response.json();
             if (data) {
-                localStorage.setItem("userData", JSON.stringify(data.data));
+                localStorage.setItem("userData", JSON.stringify(data));
             } else {
                 console.error('Failed to update user:', data);
             }

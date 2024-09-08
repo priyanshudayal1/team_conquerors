@@ -48,6 +48,10 @@ def login(request):
         student=Students.objects.get(email=email)
         check_pass=check_password(password,student.password)
         if check_pass:
+            documents=student.documents
+            if documents is None:
+                documents=[]
+            
             data={
                 'name':student.name,
                 'email':student.email,
@@ -60,6 +64,7 @@ def login(request):
                 'class12_percent':student.class12_percent,
                 'phone':student.phone,
                 'status':student.status,
+                'documents':documents
                 }
             return JsonResponse({'message':'Login Successful','success':True,'data':data,'url':'/dashboard/student','role':'student'})
         else:
@@ -74,6 +79,9 @@ def update_user(request):
     email=data['email']
     try:
         student=Students.objects.get(email=email)
+        documents=student.documents
+        if documents is None:
+            documents=[]
         user_data={
             'name':student.name,
             'email':student.email,
@@ -85,8 +93,9 @@ def update_user(request):
             'class10_percent':student.class10_percent,
             'class12_percent':student.class12_percent,
             'phone':student.phone,
-            'status':student.status
+            'status':student.status,
+            'documents':documents
         }   
-        return JsonResponse({'message':'User Updated Successfully','success':True,'data':user_data})
+        return JsonResponse({'message':'User Updated Successfully','success':True,'data':user_data,'role':'student'})
     except:
         return JsonResponse({'message':'User not found','success':False})

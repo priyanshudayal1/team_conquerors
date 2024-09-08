@@ -1,10 +1,20 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import homeImage from "../../public/homeStudents.png";
+
 const Home = () => {
   return (
     <>
       <Header />
       <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
+        <div className="mt-6">
+          <img
+            src={homeImage}
+            alt="Home Students"
+            className="rounded-lg shadow-lg"
+            style={{ width: "100%", maxWidth: "600px", height: "400px" }}
+          />
+        </div>
         <h1 className="text-6xl font-bold text-blue-600">Welcome to PMSSS</h1>
         <p className="mt-3 text-2xl text-gray-700">
           Prime Minister&apos;s Special Scholarship Scheme for JK Students

@@ -1,12 +1,34 @@
 import { Stepper, Step, StepLabel } from "@mui/material";
-import dashboardImg from "../../../public/dashboardImg.jpg";
+import image from "../../../public/studentDashboard.png";
 import Sidebar from "../../components/Dashboard/Sidebar";
 import { useEffect, useState } from "react";
 import VerificationModal from "./VerificationModal";
 import DocumentUploadModal from "./DocumentUpload";
 import { updateUserData } from "../../utils/helper";
 import Header from "../../components/Dashboard/Header";
+import {
+  CheckCircle as CheckCircleIcon,
+  Verified as VerifiedIcon,
+  Description as DescriptionIcon,
+  Autorenew as AutorenewIcon,
+  AssignmentTurnedIn as AssignmentTurnedInIcon,
+  Forward as ForwardIcon,
+  AccountBalance as AccountBalanceIcon,
+  ThumbUp as ThumbUpIcon,
+  Payment as PaymentIcon,
+} from "@mui/icons-material";
 
+const stepIcons = [
+  <CheckCircleIcon />,
+  <VerifiedIcon />,
+  <DescriptionIcon />,
+  <AutorenewIcon />,
+  <AssignmentTurnedInIcon />,
+  <ForwardIcon />,
+  <AccountBalanceIcon />,
+  <ThumbUpIcon />,
+  <PaymentIcon />,
+];
 
 const steps = [
   "Registered",
@@ -38,7 +60,7 @@ const StudentDashboard = () => {
     } else {
       console.log("No user data found");
     }
-  }, [isDocumentUploadModalOpen,isVerificationModalOpen]);
+  }, [isDocumentUploadModalOpen, isVerificationModalOpen]);
 
   useEffect(() => {
     if (userData?.data?.status === 0) {
@@ -54,22 +76,22 @@ const StudentDashboard = () => {
       console.log("Documents submitted");
       updateUserData();
     }
-  }, [userData, isDocumentUploadModalOpen,isVerificationModalOpen]);
+  }, [userData, isDocumentUploadModalOpen, isVerificationModalOpen]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <Sidebar />
       <div className="flex-1 p-10 bg-gray-100">
-        <Header title='Student Dashboard' />
+        <Header title="Student Dashboard" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex justify-center">
             <img
-              src={dashboardImg}
+              src={image}
               alt="Students"
-              className="rounded-lg shadow-md"
+              className="rounded-lg shadow-md transition-transform transform hover:scale-105"
             />
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-lg shadow-md transition-transform transform hover:scale-105">
             <h2 className="text-xl font-semibold mb-4">Progress Tracker</h2>
             <Stepper
               activeStep={(userData?.data?.status ?? -1) + 1}
@@ -77,7 +99,7 @@ const StudentDashboard = () => {
             >
               {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel>
+                  <StepLabel icon={stepIcons[index]}>
                     <span
                       className={`text-sm ${
                         index === 0 ? "text-blue-500" : "text-gray-500"

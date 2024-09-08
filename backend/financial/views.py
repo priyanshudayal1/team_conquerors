@@ -31,7 +31,7 @@ def login(request):
         else:
             return JsonResponse({'message': 'Invalid Credentials', 'success': False})
     except Exception as e:
-        return JsonResponse({'message': f'An error occurred: {str(e)}', 'success': False}, status=500)
+        return JsonResponse({'message': f'Invalid Credentials', 'success': False}, status=500)
     
     
 @csrf_exempt   
