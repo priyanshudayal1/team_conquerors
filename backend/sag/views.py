@@ -116,7 +116,7 @@ def approve_doc(request):
 
 @csrf_exempt
 def detect_edit(request):
-    data = json.loads(request.body)  # Use json.loads instead of json.load
+    data = json.loads(request.body)
     image_url = data['url']
 
     meta_res, url = download_and_return_url(image_url)
