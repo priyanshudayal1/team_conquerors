@@ -101,8 +101,12 @@ const StudentDashboard = () => {
                 <Step key={label}>
                   <StepLabel icon={stepIcons[index]}>
                     <span
-                      className={`text-sm ${
-                        index === 0 ? "text-blue-500" : "text-gray-500"
+                      className={`text-md ${
+                        index < (userData?.data?.status ?? -1) + 1
+                          ? "text-green-500"
+                          : index === (userData?.data?.status ?? -1) + 1
+                          ? "text-blue-500"
+                          : "text-gray-500"
                       }`}
                     >
                       {label}
