@@ -100,11 +100,12 @@ def approve_doc(request):
         if doc_name in docs:
             docs[doc_name]['status'] = 'approved'
             student.documents = docs
+            student.status = 3
 
             # Check if all documents are approved
             all_approved = all(doc['status'] == 'approved' for doc in docs.values())
             if all_approved:
-                student.status = 3
+                student.status = 4
 
             student.save()
             return JsonResponse({'message': 'Document Approved', 'success': True})
