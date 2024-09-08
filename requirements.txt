@@ -1,0 +1,7 @@
+cloudinary
+numpy
+opencv-python
+django
+pytesseract
+cryptography
+django-cors-headers
