@@ -175,16 +175,24 @@ def upload_docs(request):
             college_id = request.FILES.get('collegeId')
             email = request.POST.get('email')
 
+            email_user = email.split('@')[0]
+
             if file_10th:
-                file_10th_path = os.path.join(UPLOAD_DIR, file_10th.name)
+                file_10th_path = os.path.join(UPLOAD_DIR, f'{email_user}_10th.jpg')
                 with open(file_10th_path, 'wb+') as destination:
                     for chunk in file_10th.chunks():
                         destination.write(chunk)
 
             if file_12th:
-                file_12th_path = os.path.join(UPLOAD_DIR, file_12th.name)
+                file_12th_path = os.path.join(UPLOAD_DIR, f'{email_user}_12th.jpg')
                 with open(file_12th_path, 'wb+') as destination:
                     for chunk in file_12th.chunks():
+                        destination.write(chunk)
+
+            if college_id:
+                college_id_path = os.path.join(UPLOAD_DIR, f'{email_user}_id.jpg')
+                with open(college_id_path, 'wb+') as destination:
+                    for chunk in college_id.chunks():
                         destination.write(chunk)
 
             if not college_id or not email:
