@@ -3,7 +3,7 @@
 # TASKS:
 # 1. Blur Image. DONE
 # 2. Photo shop / Edit detector. DONE
-# 3. Aadhar basic API WORKING
+# 3. Aadhar basic API DONE
 # 4. File encrypt and decrypt function  
 # 5. Need to design a database
 
@@ -11,9 +11,10 @@
 import pytesseract
 from PIL import Image
 from PIL.ExifTags import TAGS
-import requests
+import io
 import cv2
 import numpy as np
+from cryptography.fernet import Fernet
 
 
 #Supporting Functions
@@ -122,6 +123,42 @@ def aadhar_verifier(aadhar_number : str):
     return aadhar_numbers[aadhar_number]
 
 
+def encrypt_file(image_path : str):
+    """
+    Takes Image path and saves inplace image encrypted.
+    """
+    key = ""
+    with open('encryption_key.key','rb') as key_file:
+        key = key_file.read()
+
+    cipher = Fernet(key)
+
+    with open(image_path, 'rb') as image_file:
+        image_data = image_file.read()
+
+    encrypted_image_data = cipher.encrypt(image_data)
+
+    with open(image_path, 'wb') as encrypted_file:
+        encrypted_file.write(encrypted_image_data)
+
+
+def decrypt_file(image_path : str):
+    with open('encryption_key.key', 'rb') as key_file:
+        key = key_file.read()
+
+    cipher = Fernet(key)
+
+    with open(image_path, 'rb') as encrypted_file:
+        encrypted_image_data = encrypted_file.read()
+
+    decrypted_image_data = cipher.decrypt(encrypted_image_data)
+
+    image_stream = io.BytesIO(decrypted_image_data)
+
+    image = Image.open(image_stream)
+
+    return image
+
 if __name__ == '__main__':
     # For testing Blurred Image or Not:
     # print('Testing For "test.jpg"')
@@ -136,14 +173,19 @@ if __name__ == '__main__':
     # analyze_noise('test1.jpg')
 
     # For Testing Aadhar API
-    aadhar_num = input('Enter Your Aadhar Number: ')
-    print('----------------------------------------------------')
-    otp = input('Enter OTP: ')
-    print('----------------------------------------------------')
-    details = aadhar_verifier(aadhar_num)
-    print(f"Name: {details['name']}")
-    print(f"Aadhar Number: {details['aadhar_number']}")
-    print(f"Phone Number: {details['p_number']}")
-    print(f"DOB : {details['dob']}")
-    print(f"Address: {details['address']}")
+    # aadhar_num = input('Enter Your Aadhar Number: ')
+    # print('----------------------------------------------------')
+    # otp = input('Enter OTP: ')
+    # print('----------------------------------------------------')
+    # details = aadhar_verifier(aadhar_num)
+    # print(f"Name: {details['name']}")
+    # print(f"Aadhar Number: {details['aadhar_number']}")
+    # print(f"Phone Number: {details['p_number']}")
+    # print(f"DOB : {details['dob']}")
+    # print(f"Address: {details['address']}")
     
+    # Test for Encrypt
+    
+    # encrypt_file('test_enc.jpg')
+
+    decrypt_file('test_enc.jpg')
