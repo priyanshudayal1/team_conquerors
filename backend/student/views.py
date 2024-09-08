@@ -201,7 +201,7 @@ def upload_docs(request):
             if forced == 'false':
                 blur = False
                 blur_message = "These Files Seem Blur Please Check: "
-
+                print('here')
                 if not is_clear_image(file_10th_path):
                     blur = True
                     blur_message += "10th Marksheet"
@@ -215,6 +215,7 @@ def upload_docs(request):
                     blur_message += "College ID"
 
                 if blur:
+                    print('blur image')
                     return JsonResponse({'success':False,'blur': blur_message}, status=400)
 
             encrypt_file(file_10th_path)
