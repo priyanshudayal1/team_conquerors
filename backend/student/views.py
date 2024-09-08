@@ -230,9 +230,9 @@ def upload_docs(request):
 
             student = Students.objects.get(email=email)
             student.documents = {
-                'file10th': file_10th_url,
-                'file12th': file_12th_url,
-                'collegeId': college_id_url
+                'file10th': {'url':file_10th_url,'status':'uploaded'},
+                'file12th': {'url':file_12th_url,'status':'uploaded'},
+                'collegeId': {'url':college_id_url,'status':'uploaded'},
             }
             if forced == 'true':
                 force=True

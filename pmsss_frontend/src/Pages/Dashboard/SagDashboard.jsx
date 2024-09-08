@@ -11,7 +11,11 @@ import {
   TableRow,
   Paper,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
+import { Visibility, CheckCircle, Search } from "@mui/icons-material";
 import Header from "../../components/Dashboard/Header";
 import { BACKEND_URL } from "../../utils/constants";
 
@@ -27,11 +31,18 @@ const steps = [
   "Disbursed",
 ];
 
+const documentLabels = {
+  file10th: "Class 10th Marksheet",
+  file12th: "Class 12th Marksheet",
+  collegeId: "College ID",
+};
+
 const SagDashboard = () => {
   const [students, setStudents] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [editStatus, setEditStatus] = useState(null);
-  const [warning, setWarning] = useState("");
+  const [expandedRow, setExpandedRow] = useState(null);
+  const [editStatuses, setEditStatuses] = useState({});
+  const [warnings, setWarnings] = useState({});
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
   useEffect(() => {
     // Fetch student information from the backend
@@ -46,7 +57,7 @@ const SagDashboard = () => {
     }
   }, []);
 
-  const handleEditCheck = async (documentId) => {
+  const handleEditCheck = async (documentId, studentId) => {
     try {
       const response = await fetch(`${BACKEND_URL}/sag/give_feedback`, {
         method: "POST",
@@ -56,13 +67,14 @@ const SagDashboard = () => {
         body: JSON.stringify({ documentId }),
       });
       const data = await response.json();
-      if (data.edited) {
-        setEditStatus("Edited");
-        setWarning("Warning: Document has been edited.");
-      } else {
-        setEditStatus("Not Edited");
-        setWarning("");
-      }
+      setEditStatuses((prevStatuses) => ({
+        ...prevStatuses,
+        [studentId]: data.edited ? "Edited" : "Not Edited",
+      }));
+      setWarnings((prevWarnings) => ({
+        ...prevWarnings,
+        [studentId]: data.edited ? "Warning: Document has been edited." : "",
+      }));
     } catch (error) {
       console.error("Error checking document edit:", error);
     }
@@ -94,6 +106,18 @@ const SagDashboard = () => {
     return steps[index] || "Unknown Status";
   };
 
+  const handleExpandRow = (studentId) => {
+    setExpandedRow(expandedRow === studentId ? null : studentId);
+  };
+
+  const handleViewDocument = (url) => {
+    setSelectedDocument(url);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedDocument(null);
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Header title="SAG Bureau Dashboard" />
@@ -112,43 +136,98 @@ const SagDashboard = () => {
           </TableHead>
           <TableBody>
             {students.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>{student.name}</TableCell>
-                <TableCell>{student.email}</TableCell>
-                <TableCell>{student.college}</TableCell>
-                <TableCell>{student.dob}</TableCell>
-                <TableCell>
-                  {getStatusByIndex(student.status)}
-                </TableCell>
-                <TableCell>{editStatus}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleEditCheck(student.email)}
-                  >
-                    Check Edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleApprove(student.id)}
-                    sx={{ ml: 2 }}
-                    disabled={student.verified}
-                  >
-                    Approve
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <React.Fragment key={student.id}>
+                <TableRow>
+                  <TableCell>{student.name}</TableCell>
+                  <TableCell>{student.email}</TableCell>
+                  <TableCell>{student.college}</TableCell>
+                  <TableCell>{student.dob}</TableCell>
+                  <TableCell>{getStatusByIndex(student.status)}</TableCell>
+                  <TableCell>{editStatuses[student.id]}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleEditCheck(student.email, student.id)}
+                    >
+                      Check Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleApprove(student.id)}
+                      sx={{ ml: 2 }}
+                      disabled={student.verified}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="default"
+                      onClick={() => handleExpandRow(student.id)}
+                      sx={{ ml: 2 }}
+                    >
+                      {expandedRow === student.id ? "Hide" : "Show"} Documents
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                {expandedRow === student.id && (
+                  <TableRow>
+                    <TableCell colSpan={7}>
+                      <Box sx={{ display: 'flex', overflowX: 'auto' }}>
+                        {Object.entries(student.documents).map(([key, { url }], index) => (
+                          <Box key={index} sx={{ minWidth: 300, p: 2, border: '1px solid #ccc', borderRadius: 2, m: 1 }}>
+                            <Typography variant="body2">{documentLabels[key]}</Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                              <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<Visibility />}
+                                onClick={() => handleViewDocument(url)}
+                              >
+                                View
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={<Search />}
+                              >
+                                Detect by AI
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                color="success"
+                                startIcon={<CheckCircle />}
+                              >
+                                Approve
+                              </Button>
+                            </Box>
+                          </Box>
+                        ))}
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      {warning && (
-        <Alert severity="warning" sx={{ mt: 2 }}>
-          {warning}
-        </Alert>
-      )}
+      {Object.values(warnings).map((warning, index) => (
+        warning && (
+          <Alert key={index} severity="warning" sx={{ mt: 2 }}>
+            {warning}
+          </Alert>
+        )
+      ))}
+      <Dialog open={Boolean(selectedDocument)} onClose={handleCloseModal} maxWidth="md" fullWidth>
+        <DialogTitle>Document View</DialogTitle>
+        <DialogContent>
+          {selectedDocument && (
+            <Box component="img" src={selectedDocument} alt="Document" sx={{ width: '100%', height: 'auto' }} />
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
