@@ -4,8 +4,8 @@
 # 1. Blur Image. DONE
 # 2. Photo shop / Edit detector. DONE
 # 3. Aadhar basic API DONE
-# 4. File encrypt and decrypt function  
-# 5. Need to design a database
+# 4. File encrypt and decrypt function  DONE
+# 5. Need to design a database DONE Will require changes
 
 #Importing Libraries
 import pytesseract
