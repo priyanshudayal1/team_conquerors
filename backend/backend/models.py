@@ -15,6 +15,8 @@ class Students(models.Model):
     class12_percent= models.FloatField()
     status=models.IntegerField(default=0)
     phone = models.CharField(max_length=10)
+    dob = models.CharField(max_length=10, null = True)
+    address = models.TextField(null=True)
     documents = models.JSONField(null=True, blank=True)
     def __str__(self):
         return self.name  
